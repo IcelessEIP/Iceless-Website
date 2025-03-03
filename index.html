@@ -1,12 +1,49 @@
 <!DOCTYPE html>
 
-<html>
+<html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Iceless</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Iceless | Dating app</title>
+    <meta name="description" content="Iceless is an innovative dating app where you don't have to break the ice">
+    <meta name="keywords" content="EIP, Epitech, Dating">
+    <meta property="og:url" content="https://iceless.app">
+    <meta property="og:title" content="Iceless | Dating app">
+    <meta property="og:type" content="website">
+    <meta property="og:description" content="Iceless is an innovative dating app where you don't have to break the ice">
+    <meta property="og:site_name" content="Iceless">
+    <meta property="og:image" content="https://iceless.app/image.png">
+    <meta property="og:locale" content="en_US">
+    <meta name="twitter:card" content="summary">
+    <meta name="msapplication-TileColor" content="#ffffff">
+    <meta name="theme-color" content="#ffffff">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="apple-touch-icon" sizes="180x180" href="/icon/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/icon/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/icon/favicon-16x16.png">
+    <link rel="manifest" href="/site.webmanifest">
+    <link rel="mask-icon" href="/icon/safari-pinned-tab.svg" color="#161616">
+    <link rel="alternate" hreflang="en" href="https://iceless.app">
+    <!-- <link rel="preload" href="fonts/GloriaHallelujahRegular.woff2" as="font" crossorigin="anonymous"> -->
+    <link rel="stylesheet" href="css/style.css">
 </head>
 
 <body>
     <p>Iceless</p>
+    <iframe title="Dummy frame" name="dummyframe" id="dummy-frame"></iframe>
+    <p id="contact-text" data-translate="send-with-success">Thank you! You will receive an email when Iceless comes out</p>
+    <form id="contact-form" action="https://formspree.io/f/mgvogrrb" method="POST" class="flex-down gap" target="dummyframe">
+      <label data-translate="your-email">Your email</label>
+      <input id="email-input" type="email" name="email">
+      <button id="send-email" type="submit">Get notified for release</button>
+    </form>
+    <p id="detail">Your email will not be used or kept for commercial reasons or for any other purpose than to be informed on the release date of Iceless</label>
+    <script>
+        window.addEventListener("load", function () {
+          const script = document.createElement('script');
+          script.src = "js/index.js";
+          document.body.appendChild(script);
+        });
+      </script>
 </body>
 </html>
