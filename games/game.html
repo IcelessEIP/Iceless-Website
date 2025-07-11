@@ -16,7 +16,6 @@
           }
         }
     </script>
-    <!-- https://cdn.jsdelivr.net/npm/three@latest/examples/jsm/ -->
 </head>
 
 <body>
@@ -44,21 +43,12 @@
             return check;
         }
 
-        if (mobileCheck()) {
+        if (mobileCheck() && window.location.search.includes("debug=true")) {
             const script = document.createElement("script");
             script.src = "https://markknol.github.io/console-log-viewer/console-log-viewer.js";
             document.head.appendChild(script);
             const script2 = document.createElement("script");
-            var stats = new Stats();
-            document.body.appendChild(stats.dom);
-            requestAnimationFrame(
-                function loop(){
-                    stats.update();
-                    requestAnimationFrame(loop)
-                }
-            );
-            script2.src="https://mrdoob.github.io/stats.js/build/stats.min.js";
-            document.head.appendChild(script2);
+            console.log("Debug mode is ON");
         }
     </script>
     <audio id="remoteAudio" autoplay style="display:none"></audio>
@@ -126,7 +116,7 @@
         const ctx = confettiCanvas.getContext('2d');
         updateConfetti();
         drawConfetti(ctx);
-        setTimeout(() => requestAnimationFrame(animateConfetti), 1000/30); // Limit to ~30 FPS
+        setTimeout(() => requestAnimationFrame(animateConfetti), 1000/30); // 30 FPS
     }
     function resizeCanvas() {
         confettiCanvas.width = winDiv.offsetWidth;
@@ -145,7 +135,7 @@
     };
     document.getElementById('win-return').onclick = function() {
         hideWinScreen();
-        // Add your return logic here
+        // Add return logic here
     };
     window.addEventListener('resize', function() {
         if (winDiv.style.display !== 'none') resizeCanvas();
