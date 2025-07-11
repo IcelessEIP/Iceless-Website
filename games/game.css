@@ -1,0 +1,123 @@
+#mobileInterface {
+    position: fixed;
+    width: calc(100% - 20px);
+    height: 50vh;
+    pointer-events: none;
+    z-index: 11;
+    top: auto;
+    bottom: 120px;
+    left: 10px;
+    touch-action: manipulation;
+}
+
+#mobileInterface #joystickWrapper1 {
+    pointer-events: auto;
+    display: block;
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    background-color: transparent;
+    width: 120px;
+    height: 120px;
+    z-index: 12;
+    touch-action: manipulation;
+    background-color: rgba(0, 0, 0, 0.4);
+    border-radius: 5%;
+}
+
+#mobileInterface #joystickWrapper2 {
+    pointer-events: auto;
+    display: block;
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    left: auto;
+    background-color: transparent;
+    width: 50vw;
+    height: 120px;
+    z-index: 12;
+    touch-action: manipulation;
+}
+
+#mobileInterface #joystickWrapper2 #jumpButton {
+    position: absolute;
+    right: 0px;
+    top: 0px;
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    background-color: rgba(0, 0, 0, 0.4);
+    opacity: 1;
+    touch-action: manipulation;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    pointer-events: auto;
+}
+
+#mobileInterface #joystickWrapper2 #jumpButton p {
+    position: relative;
+    display: inline-block;
+    color: rgb(166, 166, 166);
+    opacity: 1;
+    margin: 0;
+    padding: 0;
+    letter-spacing: 4px;
+    margin-left: 4px;
+    font-size: 80px;
+    transition: color 0.2s;
+}
+
+#joystickWrapper3 {
+    pointer-events: auto;
+    position: fixed;
+    top: 10px;
+    right: 10px;
+    width: 80px;
+    height: 80px;
+    z-index: 20;
+    background-color: rgba(0, 0, 0, 0.4);
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#microphone {
+    width: 50px;
+    height: 50px;
+    /* background-image: url("microphone.svg");
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center; */
+}
+
+#microphone svg path {
+    fill: #A6A6A6;
+}
+
+#joystickWrapper3:active {
+    background-color: rgba(0,0,0,0.6);
+}
+
+#mobileInterface #joystickWrapper2 #jumpButton p:active,
+#mobileInterface #joystickWrapper2 #jumpButton:active {
+    color: rgb(212, 212, 212);
+}
+
+body {
+    -webkit-tap-highlight-color: transparent;
+    margin: 0;
+    overflow: hidden;
+}
+
+* {
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    user-select: none;
+    touch-action: manipulation;
+}
+
+canvas {
+    display: block;
+}
