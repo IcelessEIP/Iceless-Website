@@ -62,5 +62,95 @@
         }
     </script>
     <audio id="remoteAudio" autoplay style="display:none"></audio>
+    <div id="win" style="display:none;">
+        <canvas id="confetti-canvas"></canvas>
+        <div class="win-content">
+            <h1>You Win!</h1>
+            <button id="win-return">Return</button>
+        </div>
+    </div>
+    <script>
+        // Confetti effect for win screen
+(function(){
+    const winDiv = document.getElementById('win');
+    const confettiCanvas = document.getElementById('confetti-canvas');
+    if (!winDiv || !confettiCanvas) return;
+    let confettiParticles = [];
+    let running = false;
+    function randomColor() {
+        const colors = ['#b3e0ff','#e0f7fa','#fff','#3bb9ff','#aee9f7','#c2f0fc'];
+        return colors[Math.floor(Math.random()*colors.length)];
+    }
+    function createConfetti() {
+        confettiParticles = [];
+        for (let i = 0; i < 120; i++) {
+            confettiParticles.push({
+                x: Math.random() * confettiCanvas.width,
+                y: Math.random() * -confettiCanvas.height,
+                r: 6 + Math.random() * 8,
+                d: 2 + Math.random() * 2,
+                color: randomColor(),
+                tilt: Math.random() * 10 - 5,
+                tiltAngle: 0,
+                tiltAngleIncremental: (Math.random() * 0.07) + 0.05
+            });
+        }
+    }
+    function drawConfetti(ctx) {
+        ctx.clearRect(0, 0, confettiCanvas.width, confettiCanvas.height);
+        for (let i = 0; i < confettiParticles.length; i++) {
+            let p = confettiParticles[i];
+            ctx.beginPath();
+            ctx.lineWidth = p.r;
+            ctx.strokeStyle = p.color;
+            ctx.moveTo(p.x + p.tilt + p.r/3, p.y);
+            ctx.lineTo(p.x + p.tilt, p.y + p.tilt + p.r);
+            ctx.stroke();
+        }
+    }
+    function updateConfetti() {
+        for (let i = 0; i < confettiParticles.length; i++) {
+            let p = confettiParticles[i];
+            p.y += (Math.cos(p.d) + 2 + p.r/8) * 0.8;
+            p.x += Math.sin(0.5) * 2;
+            p.tiltAngle += p.tiltAngleIncremental;
+            p.tilt = Math.sin(p.tiltAngle) * 15;
+            if (p.y > confettiCanvas.height + 20) {
+                p.x = Math.random() * confettiCanvas.width;
+                p.y = -10;
+            }
+        }
+    }
+    function animateConfetti() {
+        if (!running) return;
+        const ctx = confettiCanvas.getContext('2d');
+        updateConfetti();
+        drawConfetti(ctx);
+        setTimeout(() => requestAnimationFrame(animateConfetti), 1000/30); // Limit to ~30 FPS
+    }
+    function resizeCanvas() {
+        confettiCanvas.width = winDiv.offsetWidth;
+        confettiCanvas.height = winDiv.offsetHeight;
+    }
+    window.showWinScreen = function() {
+        winDiv.style.display = 'flex';
+        resizeCanvas();
+        createConfetti();
+        running = true;
+        animateConfetti();
+    };
+    window.hideWinScreen = function() {
+        winDiv.style.display = 'none';
+        running = false;
+    };
+    document.getElementById('win-return').onclick = function() {
+        hideWinScreen();
+        // Add your return logic here
+    };
+    window.addEventListener('resize', function() {
+        if (winDiv.style.display !== 'none') resizeCanvas();
+    });
+})();
+    </script>
 </body>
 </html>
