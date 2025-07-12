@@ -1,0 +1,154 @@
+{
+  "questions": [
+    {
+      "question": "Quelle est la capitale de l'Espagne ?",
+      "choices": ["Madrid", "Seville", "Barcelone"],
+      "answer": 0
+    },
+    {
+      "question": "Dans quel film peut-on entendre la chanson \"Let It Go\" ?",
+      "choices": ["Vaiana", "Raiponce", "La Reine des Neiges"],
+      "answer": 2
+    },
+    {
+      "question": "Quel artiste chante \"Blinding Lights\" ?",
+      "choices": ["The Weeknd", "Post Malone", "Drake"],
+      "answer": 0
+    },
+    {
+      "question": "Combien de cotes possede un hexagone ?",
+      "choices": ["5", "8", "6"],
+      "answer": 2
+    },
+    {
+      "question": "Quel est le nom du frere de Mario dans les jeux video ?",
+      "choices": ["Wario", "Luigi", "Yoshi"],
+      "answer": 1
+    },
+    {
+      "question": "Quelle serie met en scene la famille Stark ?",
+      "choices": ["Game of Thrones", "The Witcher", "Vikings"],
+      "answer": 0
+    },
+    {
+      "question": "Dans quel pays se trouve la ville de Rio de Janeiro ?",
+      "choices": ["Mexique", "Argentine", "Bresil"],
+      "answer": 2
+    },
+    {
+      "question": "Qui a interprete le role de Jack Dawson dans Titanic ?",
+      "choices": ["Leonardo DiCaprio", "Brad Pitt", "Johnny Depp"],
+      "answer": 0
+    },
+    {
+      "question": "Quel animal est le symbole du WWF ?",
+      "choices": ["Lion", "Panda", "Tigre"],
+      "answer": 1
+    },
+    {
+      "question": "De quelle couleur est Sonic, le herisson ?",
+      "choices": ["Rouge", "Vert", "Bleu"],
+      "answer": 2
+    },
+    {
+      "question": "Quel est le plus grand ocean du monde ?",
+      "choices": ["Indien", "Pacifique", "Atlantique"],
+      "answer": 1
+    },
+    {
+      "question": "Dans Star Wars, qui est le pere de Luke Skywalker ?",
+      "choices": ["Yoda", "Dark Vador", "Obi-Wan Kenobi"],
+      "answer": 1
+    },
+    {
+      "question": "Quel sport pratique Rafael Nadal ?",
+      "choices": ["Basket-ball", "Tennis", "Football"],
+      "answer": 1
+    },
+    {
+      "question": "Quelle ville est surnommee \"la Grosse Pomme\" ?",
+      "choices": ["Los Angeles", "New York", "Chicago"],
+      "answer": 1
+    },
+    {
+      "question": "Quel est le plus grand mammifere terrestre ?",
+      "choices": ["Girafe", "Elephant", "Hippopotame"],
+      "answer": 1
+    },
+    {
+      "question": "Quel est le plus long fleuve du monde ?",
+      "choices": ["Nile", "Yangtse", "Amazon"],
+      "answer": 2
+    },
+    {
+      "question": "Combien de planetes composent le systeme solaire ?",
+      "choices": ["8", "9", "7"],
+      "answer": 0
+    },
+    {
+      "question": "Quel metal est symbolise par Au dans le tableau periodique ?",
+      "choices": ["Argent", "Or", "Aluminium"],
+      "answer": 1
+    },
+    {
+      "question": "Dans quel pays se trouve la ville de Prague ?",
+      "choices": ["Hongrie", "Republique tcheque", "Pologne"],
+      "answer": 1
+    },
+    {
+      "question": "Quel est l'instrument de musique a touches utilise en jazz et classique ?",
+      "choices": ["Piano", "Harmonica", "Guitare"],
+      "answer": 0
+    },
+    {
+      "question": "Combien de pattes a une araignee ?",
+      "choices": ["8", "6", "10"],
+      "answer": 0
+    },
+    {
+      "question": "Quel est l'element principal de l'air que nous respirons ?",
+      "choices": ["Azote", "Oxygene", "Helium"],
+      "answer": 0
+    },
+    {
+      "question": "Quel pays a gagne la Coupe du monde de football en 2018 ?",
+      "choices": ["Espagne", "France", "Allemagne"],
+      "answer": 1
+    },
+    {
+      "question": "Quel est le nom du personnage principal dans la saga The Legend of Zelda ?",
+      "choices": ["Zelda", "Link", "Ganondorf"],
+      "answer": 1
+    },
+    {
+      "question": "Quelle est la capitale de l'Australie ?",
+      "choices": ["Sydney", "Melbourne", "Canberra"],
+      "answer": 2
+    },
+    {
+      "question": "Dans quel sport utilise-t-on une planche et des vagues ?",
+      "choices": ["Surf", "Ski nautique", "Voile"],
+      "answer": 0
+    },
+    {
+      "question": "Combien de continents existent sur Terre ?",
+      "choices": ["5", "7", "6"],
+      "answer": 1
+    },
+    {
+      "question": "Quel est le plus petit nombre premier ?",
+      "choices": ["1", "2", "3"],
+      "answer": 1
+    },
+    {
+      "question": "Quel fruit est connu pour sa teneur en potassium ?",
+      "choices": ["Banane", "Pomme", "Cerise"],
+      "answer": 0
+    },
+    {
+      "question": "Quel est le nom de la galaxie dans laquelle se trouve la Terre ?",
+      "choices": ["Andromede", "Voie lactee", "Magellan"],
+      "answer": 1
+    }
+  ]
+}

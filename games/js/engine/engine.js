@@ -93,7 +93,7 @@ export const renderer = new THREE.WebGLRenderer({antialias: true});
 renderer.shadowMap.enabled = true;
 renderer.toneMapping = THREE.CineonToneMapping;
 renderer.toneMappingExposure = 1.2;
-renderer.setPixelRatio(window.devicePixelRatio * 1); // 1 - Normal, 0.5 - Performance
+renderer.setPixelRatio(window.devicePixelRatio * 0.5); // 1 - Normal, 0.5 - Performance
 renderer.setSize(window.innerWidth, window.innerHeight);
 document.body.appendChild(renderer.domElement);
 
