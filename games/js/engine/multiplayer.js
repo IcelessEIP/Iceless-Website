@@ -1,4 +1,4 @@
-import { playerId, otherPlayerId, setPlayerId, setOtherPlayerId, playerModels, mixer, clips, idleAnimation, walkAnimation, action, currentEvents, setDistantEvents, resetCurrentEvents } from 'engine';
+import { playerId, otherPlayerId, setPlayerId, setOtherPlayerId, playerModels, mixer, clips, idleAnimation, walkAnimation, action, currentEvents, setDistantEvents, resetCurrentEvents, otherConnected } from 'engine';
 import * as THREE from 'three';
 
 const roomID = new URLSearchParams(window.location.search).get("roomID");
@@ -6,7 +6,8 @@ const roomID = new URLSearchParams(window.location.search).get("roomID");
 var otherRoomID = ""
 var peer;
 var localStream = null;
-var currentCall = null;
+
+let currentInterval;
 
 export function invertMute() {
     const path = document.querySelector("#microphone svg path");
@@ -28,7 +29,6 @@ export function invertMute() {
     }
 }
 
-// Request microphone access as soon as possible
 if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
     navigator.mediaDevices.getUserMedia({ audio: true, video: false })
         .then(stream => {
@@ -45,7 +45,6 @@ if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
 }
 
 function setupAudioCall(conn) {
-    // Only call if we have a local stream
     if (localStream && peer && otherRoomID) {
         const call = peer.call(otherRoomID, localStream);
         call.on('stream', remoteStream => {
@@ -54,11 +53,9 @@ function setupAudioCall(conn) {
         call.on('close', () => {
             stopRemoteAudio();
         });
-        currentCall = call;
     }
 }
 
-// Helper: Wait for localStream before calling
 function waitForLocalStreamThenCall(conn) {
     if (localStream) {
         setupAudioCall(conn);
@@ -141,7 +138,8 @@ export function multiplayerStart() {
 
         conn.on('open', function() {
             console.log('Connection opened with:', conn.peer);
-            setInterval(() => {
+            otherConnected();
+            currentInterval = setInterval(() => {
                 let pos = {
                     x: playerModels[playerId].position.x,
                     y: playerModels[playerId].position.z,
@@ -161,10 +159,10 @@ export function multiplayerStart() {
 
         conn.on('close', function() {
             console.log('Connection closed with:', conn.peer);
+            clearInterval(currentInterval);
         });
     });
 
-    // Answer incoming audio calls (should be on peer, not conn)
     peer.on('call', call => {
         if (localStream) {
             call.answer(localStream);
@@ -174,9 +172,8 @@ export function multiplayerStart() {
             call.on('close', () => {
                 stopRemoteAudio();
             });
-            currentCall = call;
         } else {
-            call.answer(); // No audio
+            call.answer();
         }
     });
 }
@@ -197,7 +194,8 @@ function connectToOtherPeer() {
         if (playerId == 0) {
             waitForLocalStreamThenCall(conn);
         }
-        setInterval(() => {
+        otherConnected();
+        currentInterval = setInterval(() => {
             const pos = {
                 x: playerModels[playerId].position.x,
                 y: playerModels[playerId].position.z,
@@ -213,6 +211,11 @@ function connectToOtherPeer() {
 
     conn.on('error', err => {
         console.log('Connection failed, retrying...', err);
+    });
+
+    conn.on('close', function() {
+        console.log('Connection closed with:', conn.peer);
+        clearInterval(currentInterval);
     });
 
     conn.on('data', data => {

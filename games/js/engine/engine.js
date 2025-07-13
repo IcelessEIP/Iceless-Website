@@ -14,6 +14,7 @@ export let delta = 1;
 
 export let playerId = 0;
 export let otherPlayerId = 0;
+export let isOtherConnected = false
 
 export let collidableMeshList = [];
 export let disabledCollidableMeshList = [];
@@ -29,6 +30,10 @@ export let distantEvents = [];
 export const targetFps = 60;
 export let interval = 1000 / targetFps;
 
+
+export function otherConnected() {
+    isOtherConnected = true;
+}
 
 export function resetDistantEvents() {
     distantEvents = [];
