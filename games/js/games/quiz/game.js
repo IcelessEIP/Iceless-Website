@@ -27,6 +27,9 @@ let distantIndex = -1;
 let firstConnection = true;
 let currentIndex;
 
+let lastPressingSent = -1;
+let distantPressing = "-1";
+
 let plateformes = [];
 
 let globalFont;
@@ -71,6 +74,12 @@ function analyseEvents() {
                 plateformes[i].material = materialGray;
             }
             getRandomQuestion();
+        }
+        if (ENGINE.distantEvents[i].startsWith("pressing ")) {
+            let current = ENGINE.distantEvents[i].split(" ")[1];
+            if (quizState === -1 || quizState === 1) {
+                distantPressing = current;
+            }
         }
         if (i === ENGINE.distantEvents.length - 1) {
             ENGINE.resetDistantEvents();
@@ -180,7 +189,7 @@ function getRandomQuestion() {
                 firstConnection = false;
                 generateRandomQuestion();
             }
-        }, 50);
+        }, 25);
     }
 }
 
@@ -197,12 +206,26 @@ function animate(now) {
         if (distantIndex >= 0 && ENGINE.isOtherConnected) {
             if (interaction > 0) {
                 questionAnswer = interaction - 1;
+                if (lastPressingSent !== interaction) {
+                    console.log(interaction);
+                    console.log(lastPressingSent);
+                    ENGINE.currentEvents.push("pressing " + interaction);
+                    lastPressingSent = interaction;
+                }
             } else {
                 questionAnswer = -1;
+                if (lastPressingSent !== -1) {
+                    ENGINE.currentEvents.push("pressing -1");
+                    lastPressingSent = -1;
+                }
             }
             if (quizState === -1 || quizState === 1) {
                 for (let i = 0; i < plateformes.length; i++) {
-                    if (plateformes[i].name.substr(plateformes[i].name.length - 1) === interaction.toString()) {
+                    if (plateformes[i].name.substr(plateformes[i].name.length - 1) === interaction.toString() &&
+                        plateformes[i].name.substr(plateformes[i].name.length - 1) === distantPressing) {
+                        plateformes[i].material = materialGold;
+                    } else if (plateformes[i].name.substr(plateformes[i].name.length - 1) === interaction.toString() ||
+                        plateformes[i].name.substr(plateformes[i].name.length - 1) === distantPressing) {
                         plateformes[i].material = materialWhite;
                     } else {
                         plateformes[i].material = materialGray;
