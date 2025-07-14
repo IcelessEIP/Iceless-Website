@@ -34,7 +34,7 @@ p {
     font-size: 40px;
 }
 
-a:link, a:visited {
+.language {
     position: absolute;
     z-index: 10;
     left: 20px;
