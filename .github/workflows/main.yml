@@ -1,0 +1,33 @@
+name: purge-and-minify
+
+on:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: write
+
+jobs:
+  checkout-minify-push:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - uses: actions/setup-node@v3
+        with:
+          node-version: '20'
+
+      - run: npm install -g terser csso-cli html-minifier-terser
+
+      - run: for i in ./js/*.js; do terser $i --compress -o $i; done
+      - run: for i in ./css/*.css; do csso $i -o $i; done
+      - run: for i in ./*.html; do html-minifier-terser --collapse-whitespace --remove-comments -o $i $i; done
+
+      - run: |
+          git config user.name "${{ github.actor }}"
+          git config user.email "${{ github.actor }}@users.noreply.github.com"
+          git checkout --orphan gh-pages
+          git add .
+          git commit -m "Automated minify of ${{ github.sha }}"
+          git push --force origin gh-pages
