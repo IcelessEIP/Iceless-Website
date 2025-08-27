@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 
-<html lang="en">
+<html lang="fr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -12,33 +12,58 @@
     <meta property="og:type" content="website">
     <meta property="og:description" content="Iceless est une app de rencontre innovante où tu n'as pas besoin de briser la glace">
     <meta property="og:site_name" content="Iceless">
-    <meta property="og:image" content="https://iceless.app/image.png">
+    <meta property="og:image" content="https://iceless.app/assets/icon/image.png">
     <meta property="og:locale" content="en_US">
     <meta name="twitter:card" content="summary">
-    <meta name="msapplication-TileColor" content="#ffffff">
-    <meta name="theme-color" content="#ffffff">
+    <meta name="msapplication-TileColor" content="#003eb0">
+    <meta name="theme-color" content="#003eb0">
+    <meta name="apple-mobile-web-app-title" content="Iceless" />
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="apple-touch-icon" sizes="180x180" href="/icon/apple-touch-icon.png">
-    <link rel="icon" type="image/png" sizes="32x32" href="/icon/favicon-32x32.png">
-    <link rel="icon" type="image/png" sizes="16x16" href="/icon/favicon-16x16.png">
-    <link rel="manifest" href="/site.webmanifest">
-    <link rel="mask-icon" href="/icon/safari-pinned-tab.svg" color="#161616">
+    <link rel="icon" type="image/png" href="/assets/icon/favicon-96x96.png" sizes="96x96" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="shortcut icon" href="/favicon.ico" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/assets/icon/apple-touch-icon.png" />
+    <link rel="manifest" href="/site.webmanifest" />
     <link rel="alternate" hreflang="en" href="https://iceless.app">
     <link rel="alternate" hreflang="fr" href="https://iceless.app/fr">
+    <link rel="stylesheet" href="css/font.css">
     <link rel="stylesheet" href="css/style.css">
 </head>
 
 <body>
-    <a href="/">English</a>
-    <p>Iceless</p>
-    <iframe title="Dummy frame" name="dummyframe" id="dummy-frame"></iframe>
-    <p id="contact-text" data-translate="thank-you-you-will-receive">Merci ! Vous receverez un email quand Iceless sortira</p>
-    <form id="contact-form" action="https://formspree.io/f/mgvogrrb" method="POST" class="flex-down gap" target="dummyframe">
-      <label data-translate="your-email">Votre email</label>
-      <input id="email-input" type="email" name="email" required>
-      <button id="send-email" type="submit" data-translate="get-notified-for-release">Être tenu au courant</button>
-    </form>
-    <p id="detail" data-translate="your-email-will-not-be-used">Votre adresse email ne sera pas utilisée ou sauvegardée pour des raisons commerciales ou tout autre raison autre qu'être informé de la sortie de Iceless</label>
+    <a class="language" href="/">English</a>
+    <overlay id="overlay">
+      <lottie-player
+        mode="normal"
+        src="assets/icon/boot.json"
+        style="position: absolute; top: 50%; left: 2%; width: 100%; transform: scale(1.5);"
+        id="boot"
+      />
+    </overlay>
+    <picture>
+      <source media="(min-width: 768px)" srcset="assets/logo/logo_512.webp" type="image/webp">
+      <source media="(min-width: 768px)" srcset="assets/logo/logo_512.png" type="image/png">
+      <source srcset="assets/logo/logo_256.webp" type="image/webp">
+      <source srcset="assets/logo/logo_256.png" type="image/png">
+      <img alt="Iceless logo" src="assets/logo/logo_512.png" id="logo">
+    </picture>
+    <h1 data-translate="welcome-to-the-future">Bienvenue dans le futur des apps de rencontre !</h1>
+    <p data-translate="iceless-is-a-new-kind">Iceless permet de rencontrer des personnes de façon innovante</p>
+    <picture>
+      <source media="(min-width: 768px)" srcset="assets/screenshots/game1.webp" type="image/webp">
+      <source media="(min-width: 768px)" srcset="assets/screenshots/game1.jpg" type="image/jpg">
+      <source srcset="assets/screenshots/game1.webp" type="image/webp">
+      <source srcset="assets/screenshots/game1.jpg" type="image/jpg">
+      <img alt="Iceless logo" src="assets/screenshots/game1.png" class="screenshot">
+    </picture>
+    <picture>
+      <source media="(min-width: 768px)" srcset="assets/screenshots/game2.webp" type="image/webp">
+      <source media="(min-width: 768px)" srcset="assets/screenshots/game2.jpg" type="image/jpg">
+      <source srcset="assets/screenshots/game2.webp" type="image/webp">
+      <source srcset="assets/screenshots/game2.jpg" type="image/jpg">
+      <img alt="Iceless logo" src="assets/screenshots/game2.png" class="screenshot second">
+    </picture>
+    <script src="js/lottie-player.js"></script>
     <script>
         window.addEventListener("load", function () {
           const script = document.createElement('script');

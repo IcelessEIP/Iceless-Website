@@ -1,6 +1,11 @@
 html {
-    background-color: #37003a;
+    background: linear-gradient(0deg,rgba(0, 62, 176, 1) 0%, rgba(20, 92, 217, 1) 100%);
+    background-attachment: fixed;
+    background-repeat: no-repeat;
+    background-size: cover;
     height: 100%;
+    overflow-x: hidden;
+    overflow-y: hidden;
 }
 
 body {
@@ -15,23 +20,8 @@ body {
     margin: 0;
 }
 
-form {
-    position: fixed;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 60px;
-    height: 100%;
-    width: 100%;
-}
-
-label {
-    font-size: 40px;
-}
-
-p {
-    font-size: 40px;
+a, p, h1, h2, h3 {
+    font-family: "Baloo Bhaijaan", Arial, sans-serif;
 }
 
 .language {
@@ -43,32 +33,54 @@ p {
     font-size: 20px;
 }
 
-#detail {
-    font-size: 15px;
-    color: #d9d9d9;
-    bottom: 10px;
+overlay {
+    height: 100%;
+    width: 100%;
+    background-color: #003eb0;
+    z-index: 500;
+    transition: opacity 1s;
     position: fixed;
 }
 
-#dummy-frame, #contact-text {
-    display: none;
+lottie-player {
+    z-index: 600;
 }
 
-#send-email {
-    background-color: #9d34d3;
-    border: none;
-    border-radius: 20px;
-    height: 60px;
-    width: 60%;
-    color: white;
-    font-weight: 700;
-    font-size: 20px;
-    cursor: pointer;
-}
-
-#email-input {
-    height: 40px;
+#logo {
     width: 40%;
-    border: none;
-    border-radius: 0px;
+    animation: 2s infinite alternate linear floating;
+}
+
+.screenshot {
+    position: absolute;
+    left: 10%;
+    transform: rotate(350deg);
+    border-radius: 20px;
+    animation: 4s infinite alternate ease-in-out rotating;
+    height: 75%;
+}
+
+.screenshot.second {
+    animation: 4.05s infinite alternate-reverse ease-in-out -0.5s rotating;
+    left: 70%;
+}
+
+@keyframes rotating {
+    0% {
+        transform: rotate(356deg);
+    }
+
+    100% {
+        transform: rotate(357.5deg);
+    }
+}
+
+@keyframes floating {
+    0% {
+        transform: translate(0, 0);
+    }
+
+    100% {
+        transform: translate(0, 8px);
+    }
 }

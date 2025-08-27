@@ -1,0 +1,9 @@
+@font-face {
+    font-family: "Baloo Bhaijaan";
+    src: url("../font/BalooBhaijaan.woff2") format("woff2"),
+        url("../font/BalooBhaijaan.woff") format("woff"),
+        url("../font/BalooBhaijaan.ttf") format("truetype");
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}

@@ -4,8 +4,10 @@
 
 const languageLinks = document.querySelectorAll("a");
 const languageNames = ["enEnglish", "frFrançais"];
+const bootAnimation = document.getElementById("boot");
+const overlay = document.getElementById("overlay");
 
-var lang = (window.location.href.split('/').pop() || "en");
+var lang = (window.location.href.split('/').pop().length === 2 ? window.location.href.split('/').pop() : "en");
 
 // Event listeners
 
@@ -56,6 +58,15 @@ function changeLanguage(_lang) {
 
 function main() {
     console.log("JS started");
+    bootAnimation.play();
 }
+
+// Event listeners
+
+bootAnimation.addEventListener("complete", () => {
+    overlay.style.opacity = "0";
+    overlay.style.pointerEvents = "none";
+    document.documentElement.style.overflowY = "auto";
+});
 
 main();
