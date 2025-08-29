@@ -13,12 +13,18 @@
     <meta property="og:description" content="Iceless is an innovative dating app where you don't have to break the ice">
     <meta property="og:site_name" content="Iceless">
     <meta property="og:image" content="https://iceless.app/assets/icon/image.jpg">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
     <meta property="og:locale" content="en_US">
-    <meta name="twitter:card" content="summary">
+    <meta property="og:locale:alternate" content="fr_FR">
+    <meta name="twitter:title" content="Iceless | Dating app">
+    <meta name="twitter:description" content="Iceless is an innovative dating app where you don't have to break the ice">
+    <meta name="twitter:image" content="https://iceless.app/assets/icon/image.jpg">
+    <meta name="twitter:image:alt" content="Logo for Iceless, a dating app">
+    <meta name="twitter:card" content="summary_large_image">
     <meta name="msapplication-TileColor" content="#003eb0">
     <meta name="theme-color" content="#003eb0">
-    <meta name="apple-mobile-web-app-title" content="Iceless" />
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="apple-mobile-web-app-title" content="Iceless">
     <link rel="icon" type="image/png" href="/assets/icon/favicon-96x96.png" sizes="96x96" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="shortcut icon" href="/favicon.ico" />
@@ -28,6 +34,17 @@
     <link rel="alternate" hreflang="fr" href="https://iceless.app/fr">
     <link rel="stylesheet" href="css/font.css">
     <link rel="stylesheet" href="css/style.css">
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "MobileApplication",
+      "name": "Iceless",
+      "operatingSystem": "iOS, Android",
+      "applicationCategory": "Dating",
+      "url": "https://iceless.app",
+      "description": "Iceless is an innovative dating app where you don't have to break the ice"
+    }
+    </script>
 </head>
 
 <body>
@@ -36,7 +53,6 @@
       <lottie-player
         mode="normal"
         src="assets/icon/boot.json"
-        style="position: absolute; top: 50%; left: 2%; width: 100%; transform: scale(1.5);"
         id="boot"
       />
     </overlay>
@@ -49,19 +65,15 @@
     </picture>
     <h1 data-translate="welcome-to-the-future">Welcome to the future of dating!</h1>
     <p data-translate="iceless-is-a-new-kind">Iceless is a new kind of dating app</p>
-    <picture>
-      <source media="(min-width: 768px)" srcset="assets/screenshots/game1.webp" type="image/webp">
-      <source media="(min-width: 768px)" srcset="assets/screenshots/game1.jpg" type="image/jpg">
+    <picture class="screenshot">
       <source srcset="assets/screenshots/game1.webp" type="image/webp">
       <source srcset="assets/screenshots/game1.jpg" type="image/jpg">
-      <img alt="Iceless logo" src="assets/screenshots/game1.png" class="screenshot">
+      <img alt="Iceless logo" src="assets/screenshots/game1.png">
     </picture>
-    <picture>
-      <source media="(min-width: 768px)" srcset="assets/screenshots/game2.webp" type="image/webp">
-      <source media="(min-width: 768px)" srcset="assets/screenshots/game2.jpg" type="image/jpg">
+    <picture class="screenshot second">
       <source srcset="assets/screenshots/game2.webp" type="image/webp">
       <source srcset="assets/screenshots/game2.jpg" type="image/jpg">
-      <img alt="Iceless logo" src="assets/screenshots/game2.png" class="screenshot second">
+      <img alt="Iceless logo" src="assets/screenshots/game2.png">
     </picture>
     <script src="js/lottie-player.js"></script>
     <script>

@@ -51,7 +51,7 @@ lottie-player {
     animation: 2s infinite alternate linear floating;
 }
 
-.screenshot {
+.screenshot img {
     position: absolute;
     left: 10%;
     transform: rotate(350deg);
@@ -60,9 +60,33 @@ lottie-player {
     height: 75%;
 }
 
-.screenshot.second {
+.screenshot.second img {
     animation: 4.05s infinite alternate-reverse ease-in-out -0.5s rotating;
     left: 70%;
+}
+
+#boot {
+    position: absolute;
+    top: 50%;
+    left: 2%;
+    width: 100%;
+    transform: scale(1.5);
+}
+
+@media (max-width:725px) {
+    #boot {
+        left: 8%;
+        top: 45%;
+    }
+
+    .screenshot img {
+        position: relative;
+        left: 0 !important;
+    }
+
+    .screenshot {
+        display: contents;
+    }
 }
 
 @keyframes rotating {
