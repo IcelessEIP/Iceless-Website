@@ -42,6 +42,7 @@ function changeLanguage(_lang) {
             document.querySelectorAll('[data-translate]').forEach(el => {
                 const key = el.getAttribute('data-translate');
                 const translationText = data.text[key];
+                const translationAlt = data.alt[key];
                 var isTextReplaced = false;
 
                 el.childNodes.forEach(node => {
@@ -50,6 +51,9 @@ function changeLanguage(_lang) {
                     isTextReplaced = true;
                   }
                 });
+                if (translationAlt) {
+                    el.alt = translationAlt;
+                }
             });
             document.documentElement.lang = _lang;
             document.title = "Iceless | " + data.text["title"];
