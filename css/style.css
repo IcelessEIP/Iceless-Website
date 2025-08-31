@@ -51,6 +51,25 @@ lottie-player {
     animation: 2s infinite alternate linear floating;
 }
 
+.social {
+    display: flex;
+    width: 40%;
+    flex-direction: row;
+    justify-content: space-evenly;
+    align-items: center;
+    margin-bottom: 40px;
+}
+
+.social a:has(img) {
+    height: 60px;
+}
+
+.social img {
+    height: 60px;
+    cursor: pointer;
+    margin: 0;
+}
+
 .screenshot img {
     position: absolute;
     left: 10%;
@@ -77,6 +96,11 @@ lottie-player {
     #boot {
         left: 8%;
         top: 45%;
+    }
+
+    .social {
+        width: 80%;
+        margin-bottom: 0;
     }
 
     .screenshot img {

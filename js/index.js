@@ -2,7 +2,7 @@
 
 // Variables initialization
 
-const languageLinks = document.querySelectorAll("a");
+const languageLinks = document.querySelectorAll("a.language");
 const languageNames = ["enEnglish", "frFrançais"];
 const bootAnimation = document.getElementById("boot");
 const overlay = document.getElementById("overlay");
