@@ -16,6 +16,8 @@ import { potpack } from '../libs/potpack.module.js';
  *
  * This class can only be used with {@link WebGLRenderer}.
  * When using {@link WebGPURenderer}, import from `ProgressiveLightMapGPU.js`.
+ *
+ * @three_import import { ProgressiveLightMap } from 'three/addons/misc/ProgressiveLightMap.js';
  */
 class ProgressiveLightMap {
 
@@ -278,7 +280,7 @@ class ProgressiveLightMap {
 	 *
 	 * @private
 	 * @param {number} res - The square resolution of this object's lightMap.
-	 * @param {WebGLRenderTarget} [lightMap] - The lightmap to initialize the plane with.
+	 * @param {?WebGLRenderTarget} [lightMap] - The lightmap to initialize the plane with.
 	 */
 	_initializeBlurPlane( res, lightMap = null ) {
 

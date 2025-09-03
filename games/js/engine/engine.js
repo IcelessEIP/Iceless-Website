@@ -30,6 +30,8 @@ export let distantEvents = [];
 export const targetFps = 60;
 export let interval = 1000 / targetFps;
 
+export let quality = new URLSearchParams(window.location.search).get("quality") || 0.5;
+
 
 export function otherConnected() {
     isOtherConnected = true;
@@ -98,7 +100,7 @@ export const renderer = new THREE.WebGLRenderer({antialias: true});
 renderer.shadowMap.enabled = true;
 renderer.toneMapping = THREE.CineonToneMapping;
 renderer.toneMappingExposure = 1.2;
-renderer.setPixelRatio(window.devicePixelRatio * 0.5); // 1 - Normal, 0.5 - Performance
+renderer.setPixelRatio(window.devicePixelRatio * quality); // 1 - Normal, 0.5 - Performance
 renderer.setSize(window.innerWidth, window.innerHeight);
 document.body.appendChild(renderer.domElement);
 

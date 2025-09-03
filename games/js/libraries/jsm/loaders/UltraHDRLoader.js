@@ -62,6 +62,7 @@ const SRGB_TO_LINEAR = Array( 1024 )
  * ```
  *
  * @augments Loader
+ * @three_import import { UltraHDRLoader } from 'three/addons/loaders/UltraHDRLoader.js';
  */
 class UltraHDRLoader extends Loader {
 
@@ -88,7 +89,7 @@ class UltraHDRLoader extends Loader {
 	 * Sets the texture type.
 	 *
 	 * @param {(HalfFloatType|FloatType)} value - The texture type to set.
-	 * @return {RGBELoader} A reference to this loader.
+	 * @return {UltraHDRLoader} A reference to this loader.
 	 */
 	setDataType( value ) {
 

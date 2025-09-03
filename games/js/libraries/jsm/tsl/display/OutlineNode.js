@@ -40,6 +40,7 @@ let _rendererState;
  * ```
  *
  * @augments TempNode
+ * @three_import import { outline } from 'three/addons/tsl/display/OutlineNode.js';
  */
 class OutlineNode extends TempNode {
 
@@ -55,7 +56,7 @@ class OutlineNode extends TempNode {
 	 * @param {Scene} scene - A reference to the scene.
 	 * @param {Camera} camera - The camera the scene is rendered with.
 	 * @param {Object} params - The configuration parameters.
-	 * @param {Array<Object3D>} params.selectedObjects - An array of selected objects.
+	 * @param {Array<Object3D>} [params.selectedObjects] - An array of selected objects.
 	 * @param {Node<float>} [params.edgeThickness=float(1)] - The thickness of the edges.
 	 * @param {Node<float>} [params.edgeGlow=float(0)] - Can be used for an animated glow/pulse effects.
 	 * @param {number} [params.downSampleRatio=2] - The downsample ratio.
@@ -741,7 +742,7 @@ export default OutlineNode;
  * @param {Scene} scene - A reference to the scene.
  * @param {Camera} camera - The camera the scene is rendered with.
  * @param {Object} params - The configuration parameters.
- * @param {Array<Object3D>} params.selectedObjects - An array of selected objects.
+ * @param {Array<Object3D>} [params.selectedObjects] - An array of selected objects.
  * @param {Node<float>} [params.edgeThickness=float(1)] - The thickness of the edges.
  * @param {Node<float>} [params.edgeGlow=float(0)] - Can be used for animated glow/pulse effects.
  * @param {number} [params.downSampleRatio=2] - The downsample ratio.

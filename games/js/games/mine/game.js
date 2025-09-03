@@ -3,6 +3,7 @@ import * as THREE from 'three';
 import * as CONTROLS from 'engine/controls.js';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js'; // should not be here, should be used in engine.js and have a function to load model
 import { Sky } from 'three/addons/objects/Sky.js'; // same as above
+import { Water } from 'three/addons/objects/Water.js';
 
 var interactions = [];
 var spinning = [];
@@ -22,15 +23,15 @@ let ropeClock = new THREE.Clock(false);
 let ropeValidation = [false, false];
 let ropeState = 0;
 
+let water;
+
 function analyseEvents() {
     for (let i = 0; i < ENGINE.distantEvents.length; i++) {
         if (ENGINE.distantEvents[i].startsWith("spinning0 ")) {
             spinning[0].rotation.y = parseFloat(ENGINE.distantEvents[i].split(" ")[1]);
            if (spinning[0].rotation.y > 2.7 && spinning[0].rotation.y < 3.5) {
-                // ENGINE.removeFromCollidableMeshList(7);
                 ENGINE.collidableMeshList.find(m => m.name === "Collision7").position.z = -6.5;
             } else if (ENGINE.collidableMeshList.find(m => m.name === "Collision7")) {
-                // ENGINE.addBackToCollidableMeshList(7);
                 ENGINE.collidableMeshList.find(m => m.name === "Collision7").position.z = -4.5;
             }
             if (ENGINE.playerId === 1) {
@@ -52,6 +53,63 @@ function analyseEvents() {
     }
 }
 
+function getPlayerForwardDirection(player) {
+    const forward = new THREE.Vector3(1, 0, 0);
+    forward.applyEuler(player.rotation);
+    return forward;
+}
+
+function pushWithRealisticBounce(model, direction, horizontalForce, upwardForce = 5) {
+    const originalPosition = model.position.clone();
+    const horizontalVelocity = direction.clone().normalize().multiplyScalar(horizontalForce);
+    let verticalVelocity = upwardForce;
+    const gravity = -30;
+    const groundY = originalPosition.y;
+    const damping = 0.6;
+    const friction = 0.98;
+
+    function animate() {
+        const deltaTime = 0.016;
+        verticalVelocity += gravity * deltaTime;
+        model.position.add(horizontalVelocity.clone().multiplyScalar(deltaTime));
+        model.position.y += verticalVelocity * deltaTime;
+
+        if (model.position.y <= groundY && verticalVelocity < 0) {
+            model.position.y = groundY;
+            if (Math.abs(verticalVelocity) > 1) {
+                verticalVelocity = -verticalVelocity * damping;
+            } else {
+                verticalVelocity = 0;
+            }
+        }
+
+        horizontalVelocity.multiplyScalar(friction);
+
+        if (Math.abs(verticalVelocity) > 0.1 || horizontalVelocity.length() > 0.1) {
+            requestAnimationFrame(animate);
+        } else {
+            model.position.y = groundY;
+        }
+    }
+
+    animate();
+}
+
+function isPlayerLookingAtTarget2D(player1, player2, threshold = 0.5) {
+    const playerYaw = player1.rotation.y;
+    const dx = player2.position.x - player1.position.x;
+    const dz = player2.position.z - player1.position.z;
+    const angleToTarget = Math.atan2(dx, dz);
+
+    let angleDifference = Math.abs(playerYaw - angleToTarget);
+    if (angleDifference > Math.PI) {
+        angleDifference = 2 * Math.PI - angleDifference;
+    }
+    const maxAngle = Math.acos(threshold);
+
+    return !(angleDifference <= maxAngle);
+}
+
 // Animation loop
 function animate(now) {
     let isCollide = false;
@@ -66,10 +124,8 @@ function animate(now) {
                 }
                 ENGINE.currentEvents.push("spinning0 " + spinning[0].rotation.y);
                 if (spinning[0].rotation.y > 2.7 && spinning[0].rotation.y < 3.5) {
-                    // ENGINE.removeFromCollidableMeshList(7);
                     ENGINE.collidableMeshList.find(m => m.name === "Collision7").position.z = -6.5;
                 } else if (ENGINE.collidableMeshList.find(m => m.name === "Collision7")) {
-                    // ENGINE.addBackToCollidableMeshList(7);
                     ENGINE.collidableMeshList.find(m => m.name === "Collision7").position.z = -4.5;
                 }
         } else if ((ENGINE.triangleClicked && interaction === 4 && ENGINE.playerId === 0) ||
@@ -89,6 +145,14 @@ function animate(now) {
             let script = document.createElement("script");
             script.textContent = "showWinScreen();"
             document.head.appendChild(script);
+        } else if (ENGINE.triangleClicked) {
+            if (Math.abs(ENGINE.playerModels[ENGINE.otherPlayerId].position.x - ENGINE.playerModels[ENGINE.playerId].position.x) < 3.5 &&
+            Math.abs(ENGINE.playerModels[ENGINE.otherPlayerId].position.z - ENGINE.playerModels[ENGINE.playerId].position.z) < 3.5) {
+                if (isPlayerLookingAtTarget2D(ENGINE.playerModels[ENGINE.playerId], ENGINE.playerModels[ENGINE.otherPlayerId])) {
+                    console.log("near and facing!");
+                    pushWithRealisticBounce(ENGINE.playerModels[ENGINE.otherPlayerId], getPlayerForwardDirection(ENGINE.playerModels[ENGINE.playerId]), 3, 3);
+                }
+            }
         }
         if (ropeState === 1) {
             ropeClock.getElapsedTime();
@@ -164,9 +228,11 @@ function animate(now) {
                     spinning[inSpinningMode].position.z + Math.cos(spinning[inSpinningMode].rotation.y + Math.PI) * 6
                 )
             );
-            // ENGINE.playerModels[ENGINE.playerId].updateMatrixWorld();
         } else {
             ENGINE.updatePlayer(ENGINE.playerModels[ENGINE.playerId].position);
+        }
+        if (ENGINE.quality >= 0.5) {
+            water.material.uniforms['time'].value += 1.0 / 60.0;
         }
         ENGINE.controls.target.set(ENGINE.playerModels[ENGINE.playerId].position.x, ENGINE.playerModels[ENGINE.playerId].position.y, ENGINE.playerModels[ENGINE.playerId].position.z);
         ENGINE.playerModels[ENGINE.playerId].updateMatrixWorld();
@@ -277,20 +343,20 @@ export function game() {
 
     loader.loadAsync("assets/models/interaction/interaction.glb")
     .then(gltf => {
-        const positions = [
-            new THREE.Vector3(-7, 6, 1.5),
-            new THREE.Vector3(-7, 6, -21.5),
-            new THREE.Vector3(0, 5, -5),
-            new THREE.Vector3(0, 6, -20.5),
-            new THREE.Vector3(-7, 6, -33.5),
-            new THREE.Vector3(7, 6, -33.5)
+        const positionsRotations = [
+            [new THREE.Vector3(-7, 6, 1.5), [0, -6.27, 0]],
+            [new THREE.Vector3(-7, 6, -21.5), [0, -6.27, 0]],
+            [new THREE.Vector3(0, 5, -5), [0, -6.27, 0]],
+            [new THREE.Vector3(0, 6, -20.5), [0, -6.27, 0]],
+            [new THREE.Vector3(-7, 6, -33.5), [0, -6.27, 0]],
+            [new THREE.Vector3(7, 6, -33.5), [0, -6.27, 0]]
         ];
 
-        positions.forEach((pos) => {
+        positionsRotations.forEach((pos) => {
             const clone = gltf.scene.clone(true);
 
-            clone.position.copy(pos);
-            clone.rotation.set(0, -6.27, 0);
+            clone.position.copy(pos[0]);
+            clone.rotation.set(...pos[1]);
 
             interactions.push(clone);
             ENGINE.scene.add(clone);
@@ -364,10 +430,39 @@ export function game() {
         console.error(error);
     });
 
-    const snowTexture = new THREE.TextureLoader().load('assets/textures/snowball.png');
+    if (ENGINE.quality >= 0.5) {
+        const waterGeometry = new THREE.PlaneGeometry(750, 750);
+        const waterNormals = new THREE.TextureLoader().load("assets/textures/water_normal.jpg");
+        waterNormals.wrapS = waterNormals.wrapT = THREE.RepeatWrapping;
 
+        water = new Water(
+            waterGeometry,
+            {
+                waterNormals: waterNormals,
+                sunDirection: new THREE.Vector3(0, 50, 0),
+                sunColor: 0x003eb0,
+                waterColor: 0x003eb0
+            }
+        );
+
+        water.material.uniforms.waterColor.value = new THREE.Color(0x003eb0);
+        water.rotation.x = - Math.PI / 2;
+        water.position.set(0, -40, -100);
+
+        ENGINE.scene.add(water);
+    }
+
+    const canvas = document.createElement('canvas');
+    canvas.width = canvas.height = 16;
+    const ctx = canvas.getContext('2d');
+    ctx.fillStyle = '#fff';
+    ctx.beginPath();
+    ctx.arc(8, 8, 8, 0, Math.PI * 2);
+    ctx.fill();
+
+    const snowTexture = new THREE.CanvasTexture(canvas);
     const snowMaterial = new THREE.PointsMaterial({
-        size: 0.25,
+        size: 0.3,
         map: snowTexture,
         blending: THREE.AdditiveBlending,
         depthTest: false,
@@ -379,7 +474,7 @@ export function game() {
 
     const gridX = 3;
     const gridZ = 6;
-    const snowPerTile = 40;
+    const snowPerTile = 40 * ENGINE.quality;
     const positions = [];
     const tileSize = 20;
     snowCount = gridX * gridZ * snowPerTile;
