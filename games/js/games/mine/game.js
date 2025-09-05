@@ -272,16 +272,16 @@ export function game() {
 
     const directionalLight = new THREE.DirectionalLight(0xE4EEFF, 3.0);
     directionalLight.position.set(20, 40, 20);
-    directionalLight.castShadow = true;
+    directionalLight.castShadow = ENGINE.quality < 0.6 ? false : true;
     directionalLight.shadow.camera.left = -50;
     directionalLight.shadow.camera.right = 50;
     directionalLight.shadow.camera.top = 50;
     directionalLight.shadow.camera.bottom = -50;
+    directionalLight.shadow.camera.far = 500;
 
-    directionalLight.shadow.mapSize.width = 2048;
-    directionalLight.shadow.mapSize.height = 2048;
-    directionalLight.shadow.bias = -0.0001;
-
+    directionalLight.shadow.mapSize.width = ENGINE.quality > 0.7 ? 2048 : 512;
+    directionalLight.shadow.mapSize.height = ENGINE.quality > 0.7 ? 2048 : 512;
+    directionalLight.shadow.bias = -0.001;
     ENGINE.scene.add(directionalLight);
 
     const hemiLight = new THREE.HemisphereLight(0xaaccff, 0xddeeff, 1.0);

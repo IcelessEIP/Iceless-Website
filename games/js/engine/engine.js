@@ -93,12 +93,27 @@ export function setPlayerModel(newPlayerModel, i) {
     playerModels[i] = newPlayerModel;
 }
 
+export function setOrthoCamera() {
+    const aspect = window.innerWidth / window.innerHeight;
+    const frustumSize = 100;
+
+    camera = new THREE.OrthographicCamera(
+        -frustumSize * aspect / 2,
+        frustumSize * aspect / 2,
+        frustumSize / 2,
+        -frustumSize / 2,
+        0.1,
+        1000
+    );
+}
+
 export const scene = new THREE.Scene();
-export const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+export var camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
 
 export const renderer = new THREE.WebGLRenderer({antialias: true});
 renderer.shadowMap.enabled = true;
-renderer.toneMapping = THREE.CineonToneMapping;
+renderer.shadowMap.type = quality > 0.9 ? THREE.PCFSoftShadowMap : THREE.PCFShadowMap;
+renderer.toneMapping = THREE.ACESFilmicToneMapping;
 renderer.toneMappingExposure = 1.2;
 renderer.setPixelRatio(window.devicePixelRatio * quality); // 1 - Normal, 0.5 - Performance
 renderer.setSize(window.innerWidth, window.innerHeight);
@@ -144,6 +159,18 @@ export function updatePlayer(position) {
     }
     // reposition camera
     camera.position.sub(controls.target)
+};
+
+export function updatePlayerNoCamera(position) {
+    if (CONTROLS.joystickPower > 0) {
+        tempVector
+            .set(0, 0, CONTROLS.joystickPower >= 0.2 ? 0.2 * (delta * 60) : CONTROLS.joystickPower * (delta * 60))
+            .applyAxisAngle(upVector, CONTROLS.joystickAngle)
+                position.addScaledVector(
+                    tempVector,
+                    1
+                )
+    }
 };
 
 // Handle window resize

@@ -312,10 +312,9 @@ function animate(now) {
             lastPlayerPosition = ENGINE.playerModels[ENGINE.playerId].position.clone();
         }
         ENGINE.updatePlayer(ENGINE.playerModels[ENGINE.playerId].position);
-        ENGINE.controls.target.set(ENGINE.playerModels[ENGINE.playerId].position.x, ENGINE.playerModels[ENGINE.playerId].position.y, ENGINE.playerModels[ENGINE.playerId].position.z);
+        ENGINE.camera.position.set(ENGINE.playerModels[ENGINE.playerId].position.x, 15, 50);
+        ENGINE.camera.rotation.set(-0.3, 0, 0);
         ENGINE.playerModels[ENGINE.playerId].updateMatrixWorld();
-        ENGINE.controls.target.copy(ENGINE.playerModels[ENGINE.playerId].position)
-        ENGINE.camera.position.add(ENGINE.playerModels[ENGINE.playerId].position)
         ENGINE.playerModels[ENGINE.playerId].rotation.set(0, CONTROLS.joystickAngle - 1.5, 0);
     }
     if (ENGINE.mixer.length > 0) {
@@ -329,63 +328,48 @@ function animate(now) {
     lastTime = now;
     analyseEvents();
     ENGINE.triangleReset();
-    ENGINE.controls.update();
     ENGINE.renderer.render(ENGINE.scene, ENGINE.camera);
 }
 
 export function game() {
+    ENGINE.camera.position.set(0, 5, 50);
     ENGINE.controls.maxPolarAngle = Math.PI / 3;
     ENGINE.controls.minPolarAngle = Math.PI / 3;
+    ENGINE.controls.maxDistance = 50;
+    ENGINE.controls.minDistance = 50;
 
-    const ambientLight = new THREE.AmbientLight(0xaaccff, 2.0);
+    const ambientLight = new THREE.AmbientLight(0xaaccff, 1.0);
     ENGINE.scene.add(ambientLight);
 
-    const directionalLight = new THREE.DirectionalLight(0xE4EEFF, 3.0);
+    const directionalLight = new THREE.DirectionalLight(0xE4EEFF, 1.5);
     directionalLight.position.set(20, 40, 20);
     directionalLight.castShadow = true;
     directionalLight.shadow.camera.left = -50;
     directionalLight.shadow.camera.right = 50;
     directionalLight.shadow.camera.top = 50;
     directionalLight.shadow.camera.bottom = -50;
+    directionalLight.shadow.camera.far = 400;
 
-    directionalLight.shadow.mapSize.width = 2048;
-    directionalLight.shadow.mapSize.height = 2048;
-    directionalLight.shadow.bias = -0.0001;
+    directionalLight.shadow.mapSize.width = ENGINE.quality > 0.7 ? 2048 : 512;
+    directionalLight.shadow.mapSize.height = ENGINE.quality > 0.7 ? 2048 : 512;
+    directionalLight.shadow.bias = -0.001;
 
     ENGINE.scene.add(directionalLight);
 
-    const hemiLight = new THREE.HemisphereLight(0xaaccff, 0xddeeff, 1.0);
-    ENGINE.scene.add(hemiLight);
+    const spotLight = new THREE.SpotLight(0xE4EEFF, 10);
+    spotLight.position.set(10, 20, 50);
+    spotLight.castShadow = true;
+    spotLight.angle = Math.PI / 30;
+    spotLight.penumbra = 0.3;
+    spotLight.decay = 0;
+    spotLight.distance = 200;
+    spotLight.shadow.mapSize.width = ENGINE.quality > 0.7 ? 2048 : 512;
+    spotLight.shadow.mapSize.height = ENGINE.quality > 0.7 ? 2048 : 512;
+    spotLight.shadow.bias = -0.001;
 
-    const pointLight = new THREE.PointLight(0xaaccff, 0.5, 100);
-    pointLight.position.set(0, 3, 0);
-    ENGINE.scene.add(pointLight);
-
-    const sky = new Sky();
-    sky.scale.setScalar(5000);
-
-    const effectController = {
-        turbidity: 1.0,
-        rayleigh: 2.5,
-        mieCoefficient: 0.002,
-        mieDirectionalG: 0.6,
-        elevation: 70,
-        azimuth: 180,
-    };
-
-    const phi = THREE.MathUtils.degToRad(90 - effectController.elevation);
-    const theta = THREE.MathUtils.degToRad(effectController.azimuth);
-    const sunPosition = new THREE.Vector3().setFromSphericalCoords(1, phi, theta);
-
-    const uniforms = sky.material.uniforms;
-    uniforms['turbidity'].value = effectController.turbidity;
-    uniforms['rayleigh'].value = effectController.rayleigh;
-    uniforms['mieCoefficient'].value = effectController.mieCoefficient;
-    uniforms['mieDirectionalG'].value = effectController.mieDirectionalG;
-    uniforms['sunPosition'].value = sunPosition;
-
-    ENGINE.scene.add(sky);
-
+    // const spotHelper = new THREE.SpotLightHelper(spotLight);
+    // ENGINE.scene.add(spotHelper);
+    ENGINE.scene.add(spotLight);
 
     const loader = new GLTFLoader();
     loader.loadAsync("assets/models/pinguin/pinguin_both.glb")
