@@ -5,5 +5,7 @@ Disallow: /privacy
 Disallow: /privacy.html
 Disallow: /csae
 Disallow: /csae.html
+Disallow: /report
+Disallow: /report.html
 
 Sitemap: https://iceless.app/sitemap.xml

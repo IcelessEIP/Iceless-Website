@@ -20,7 +20,7 @@ body {
     margin: 0;
 }
 
-a, p, h1, h2, h3 {
+a, p, h1, h2, h3, label, button, input, textarea {
     font-family: "Baloo Bhaijaan", Arial, sans-serif;
 }
 
@@ -90,6 +90,66 @@ lottie-player {
     left: 2%;
     width: 100%;
     transform: scale(1.5);
+}
+
+form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4vh;
+    height: 60%;
+    width: 60%;
+    font-size: 3vh;
+}
+
+form label {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+form input, form textarea, form label {
+    width: 100%;
+    border-radius: 10vh;
+    border: none;
+}
+
+form textarea {
+    height: 20vh;
+    font-size: 2vh
+}
+
+form input[name="email"] {
+    width: 40vh;
+    text-align: center;
+    font-size: 2vh
+}
+
+form textarea {
+    padding: 4vh;
+    resize: none;
+}
+
+button {
+    border-radius: 10vh;
+    border: 0.5vh solid white;
+    width: 20vh;
+    height: 8vh;
+    background-color: rgb(20, 92, 217);
+    color: white;
+    transition: background-color 0.3s;
+}
+
+button:hover {
+    background-color: rgb(10, 78, 190);
+}
+
+button:active {
+    background-color: rgb(0, 62, 176);
+}
+
+#formsent {
+    display: none;
 }
 
 @media (max-width:725px) {

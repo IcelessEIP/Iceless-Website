@@ -7,15 +7,13 @@ const languageNames = ["enEnglish", "frFrançais"];
 const bootAnimation = document.getElementById("boot");
 const overlay = document.getElementById("overlay");
 
+const sendButton = document.getElementById("sendform");
+const formSent = document.getElementById("formsent");
+const report = document.getElementById("report");
+
 var lang = (window.location.href.split('/').pop().length === 2 ? window.location.href.split('/').pop() : "en");
 
 // Event listeners
-
-window.addEventListener("submit", function() {
-    document.getElementById("contact-form").style.display = "none";
-    document.getElementById("contact-text").style.display = "block";
-    document.getElementById("detail").style.display = "none";
-});
 
 languageLinks.forEach(function(elem) {
     elem.addEventListener("click", function (e) {
@@ -72,5 +70,12 @@ bootAnimation.addEventListener("complete", () => {
     overlay.style.pointerEvents = "none";
     document.documentElement.style.overflowY = "auto";
 });
+
+if (sendButton) {
+    window.addEventListener("submit", function() {
+        report.style.display = "none";
+        formsent.style.display = "block";
+    });
+}
 
 main();
