@@ -2,7 +2,6 @@ import * as ENGINE from 'engine';
 import * as THREE from 'three';
 import * as CONTROLS from 'engine/controls.js';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js'; // should not be here, should be used in engine.js and have a function to load model
-import { Sky } from 'three/addons/objects/Sky.js'; // same as above
 import { FontLoader } from 'three/addons/loaders/FontLoader.js';
 import { TextGeometry } from 'three/addons/geometries/TextGeometry.js';
 
@@ -14,6 +13,12 @@ let lastTime = 0;
 
 let curtains;
 let curtainsState = 0;
+
+let spotLight;
+let spotLight2;
+let angle = 0;
+
+let directionalLight;
 
 let quizClock = new THREE.Clock(false);
 let quizState = -1;
@@ -35,29 +40,29 @@ let plateformes = [];
 let globalFont;
 
 const materialGreen = new THREE.MeshStandardMaterial({
-                    color: 'green',
-                    roughness: 0.5
-                });
+                        color: 'green',
+                        roughness: 0.5
+                    });
 
 const materialRed = new THREE.MeshStandardMaterial({
-                    color: 'red',
-                    roughness: 0.5
-                });
+                        color: 'red',
+                        roughness: 0.5
+                    });
 
 const materialGray = new THREE.MeshStandardMaterial({
-                    color: '#3F3F3F',
-                    roughness: 0.5
-                });
+                        color: '#3F3F3F',
+                        roughness: 0.5
+                    });
 
 const materialWhite = new THREE.MeshStandardMaterial({
-                    color: 'white',
-                    roughness: 0.5
-                });
+                        color: 'white',
+                        roughness: 0.5
+                    });
 
 const materialGold = new THREE.MeshStandardMaterial({
-                    color: 'gold',
-                    roughness: 0.5
-                });
+                        color: 'gold',
+                        roughness: 0.5
+                    });
 
 function analyseEvents() {
     for (let i = 0; i < ENGINE.distantEvents.length; i++) {
@@ -233,11 +238,31 @@ function animate(now) {
                 }
             }
             if (curtains && curtains.position.y < 35 && curtainsState === 1) {
-                curtains.position.y += 0.1;
+                if (now - lastTime >= ENGINE.interval) {
+                    curtains.position.y += 0.15;
+                    angle += 0.15;
+                    spotLight.target.position.y = Math.cos(angle) * 5;
+                    spotLight.target.position.z = Math.sin(angle) * 5;
+                    spotLight2.target.position.y = Math.cos(angle + 15) * 5;
+                    spotLight2.target.position.z = Math.sin(angle + 15) * 5;
+                }
+            } else if (curtains && curtainsState === 1 && directionalLight.intensity < 3) {
+                if (now - lastTime >= ENGINE.interval) {
+                    directionalLight.intensity += 0.1;
+                    spotLight.intensity -= 0.6;
+                    spotLight2.intensity -= 0.6;
+                }
             } else if (curtains && curtains.position.y === 35) {
                 curtainsState = 2;
             } else if (curtains && curtains.position.y > 15 && curtainsState === 3) {
-                curtains.position.y -= 0.1;
+                if (now - lastTime >= ENGINE.interval) {
+                    curtains.position.y -= 0.15;
+                    if (directionalLight.intensity > 1.5) {
+                        directionalLight.intensity -= 0.1;
+                        spotLight.intensity += 0.6;
+                        spotLight2.intensity += 0.6;
+                    }
+                }
             } else if (curtains && curtains.position.y === 15) {
                 curtainsState = 4;
             }
@@ -323,8 +348,9 @@ function animate(now) {
         }
     }
     requestAnimationFrame(animate);
-    if (now - lastTime < ENGINE.interval)
+    if (now - lastTime < ENGINE.interval) {
         return;
+    }
     lastTime = now;
     analyseEvents();
     ENGINE.triangleReset();
@@ -341,7 +367,7 @@ export function game() {
     const ambientLight = new THREE.AmbientLight(0xaaccff, 1.0);
     ENGINE.scene.add(ambientLight);
 
-    const directionalLight = new THREE.DirectionalLight(0xE4EEFF, 1.5);
+    directionalLight = new THREE.DirectionalLight(0xE4EEFF, 1.5);
     directionalLight.position.set(20, 40, 20);
     directionalLight.castShadow = true;
     directionalLight.shadow.camera.left = -50;
@@ -356,20 +382,34 @@ export function game() {
 
     ENGINE.scene.add(directionalLight);
 
-    const spotLight = new THREE.SpotLight(0xE4EEFF, 10);
-    spotLight.position.set(10, 20, 50);
+    spotLight = new THREE.SpotLight(0xE4EEFF, 10);
+    spotLight.position.set(10, 5, 50);
     spotLight.castShadow = true;
-    spotLight.angle = Math.PI / 30;
+    spotLight.angle = Math.PI / 10;
     spotLight.penumbra = 0.3;
     spotLight.decay = 0;
     spotLight.distance = 200;
+    spotLight.target.position.set(0, Math.cos(angle) * 5,  Math.sin(angle) * 5)
     spotLight.shadow.mapSize.width = ENGINE.quality > 0.7 ? 2048 : 512;
     spotLight.shadow.mapSize.height = ENGINE.quality > 0.7 ? 2048 : 512;
     spotLight.shadow.bias = -0.001;
 
-    // const spotHelper = new THREE.SpotLightHelper(spotLight);
-    // ENGINE.scene.add(spotHelper);
+    spotLight2 = new THREE.SpotLight(0xE4EEFF, 10);
+    spotLight2.position.set(-10, 5, 50);
+    spotLight2.castShadow = true;
+    spotLight2.angle = Math.PI / 10;
+    spotLight2.penumbra = 0.3;
+    spotLight2.decay = 0;
+    spotLight2.distance = 200;
+    spotLight2.target.position.set(0, Math.cos(angle + 15) * 5,  Math.sin(angle + 15) * 5)
+    spotLight2.shadow.mapSize.width = ENGINE.quality > 0.7 ? 2048 : 512;
+    spotLight2.shadow.mapSize.height = ENGINE.quality > 0.7 ? 2048 : 512;
+    spotLight2.shadow.bias = -0.001;
+
     ENGINE.scene.add(spotLight);
+    ENGINE.scene.add(spotLight.target);
+    ENGINE.scene.add(spotLight2);
+    ENGINE.scene.add(spotLight2.target);
 
     const loader = new GLTFLoader();
     loader.loadAsync("assets/models/pinguin/pinguin_both.glb")
