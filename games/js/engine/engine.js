@@ -29,6 +29,7 @@ export let distantEvents = [];
 
 export const targetFps = 60;
 export let interval = 1000 / targetFps;
+export let intervalMs = 1 / targetFps;
 
 export let quality = new URLSearchParams(window.location.search).get("quality") || 0.5;
 
@@ -105,6 +106,27 @@ export function setOrthoCamera() {
         0.1,
         1000
     );
+}
+
+export function setPerspectiveCamera(fov, distance, isOrbit = true) {
+    camera = new THREE.PerspectiveCamera(fov, window.innerWidth / window.innerHeight, 0.1, 1000)
+    if (isOrbit) {
+        controls = new OrbitControls(camera, renderer.domElement);
+        controls.maxDistance = distance;
+        controls.minDistance = distance;
+        controls.maxPolarAngle = Math.PI / 4.4;
+        controls.minPolarAngle = Math.PI / 4.4;
+        controls.autoRotate = false;
+        controls.autoRotateSpeed = 0;
+        controls.rotateSpeed = 0.4;
+        controls.enableDamping = true;
+        controls.dampingFactor = 0.1;
+        controls.enableZoom = false;
+        controls.enablePan = false;
+        controls.enableRotate = false;
+        controls.minAzimuthAngle = - Math.PI / 2;
+        controls.maxAzimuthAngle = Math.PI / 2;
+    }
 }
 
 export const scene = new THREE.Scene();
@@ -201,6 +223,7 @@ export function animate() {
 }
 
 export function collision() {
+    return false;
     const Player = playerModels[playerId];
     if (!Player) return;
 

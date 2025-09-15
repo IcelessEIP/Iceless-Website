@@ -39,6 +39,8 @@ let plateformes = [];
 
 let globalFont;
 
+let accumulator = 0;
+
 const materialGreen = new THREE.MeshStandardMaterial({
                         color: 'green',
                         roughness: 0.5
@@ -202,6 +204,7 @@ function getRandomQuestion() {
 function animate(now) {
     let isCollide = false;
     let interaction = ENGINE.interaction();
+    accumulator += ENGINE.delta;
     ENGINE.animate();
     if (ENGINE.playerModels[0] != undefined) {
         if (firstConnection && ENGINE.isOtherConnected) {
@@ -238,7 +241,7 @@ function animate(now) {
                 }
             }
             if (curtains && curtains.position.y < 35 && curtainsState === 1) {
-                if (now - lastTime >= ENGINE.interval) {
+                if (accumulator >= ENGINE.intervalMs) {
                     curtains.position.y += 0.15;
                     angle += 0.15;
                     spotLight.target.position.y = Math.cos(angle) * 5;
@@ -247,7 +250,7 @@ function animate(now) {
                     spotLight2.target.position.z = Math.sin(angle + 15) * 5;
                 }
             } else if (curtains && curtainsState === 1 && directionalLight.intensity < 3) {
-                if (now - lastTime >= ENGINE.interval) {
+                if (accumulator >= ENGINE.intervalMs) {
                     directionalLight.intensity += 0.1;
                     spotLight.intensity -= 0.6;
                     spotLight2.intensity -= 0.6;
@@ -255,7 +258,7 @@ function animate(now) {
             } else if (curtains && curtains.position.y === 35) {
                 curtainsState = 2;
             } else if (curtains && curtains.position.y > 15 && curtainsState === 3) {
-                if (now - lastTime >= ENGINE.interval) {
+                if (accumulator >= ENGINE.intervalMs) {
                     curtains.position.y -= 0.15;
                     if (directionalLight.intensity > 1.5) {
                         directionalLight.intensity -= 0.1;
@@ -348,8 +351,8 @@ function animate(now) {
         }
     }
     requestAnimationFrame(animate);
-    if (now - lastTime < ENGINE.interval) {
-        return;
+    if (accumulator >= ENGINE.intervalMs) {
+        accumulator = 0;
     }
     lastTime = now;
     analyseEvents();

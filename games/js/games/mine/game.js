@@ -267,6 +267,8 @@ function animate(now) {
 }
 
 export function game() {
+    ENGINE.setPerspectiveCamera(80 - Math.min(window.innerWidth / window.innerHeight - 1, 0.5) * 30, // adapt fov to the screen size
+    20); // adapt distance to the screen size
     const ambientLight = new THREE.AmbientLight(0xaaccff, 2.0);
     ENGINE.scene.add(ambientLight);
 
@@ -292,7 +294,7 @@ export function game() {
     ENGINE.scene.add(pointLight);
 
     const sky = new Sky();
-    sky.scale.setScalar(5000);
+    sky.scale.setScalar(200);
 
     const effectController = {
         turbidity: 1.0,
@@ -431,7 +433,7 @@ export function game() {
     });
 
     if (ENGINE.quality >= 0.5) {
-        const waterGeometry = new THREE.PlaneGeometry(750, 750);
+        const waterGeometry = new THREE.PlaneGeometry(750, 1500);
         const waterNormals = new THREE.TextureLoader().load("assets/textures/water_normal.jpg");
         waterNormals.wrapS = waterNormals.wrapT = THREE.RepeatWrapping;
 

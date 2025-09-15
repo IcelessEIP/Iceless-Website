@@ -1,7 +1,7 @@
 import { playerId, otherPlayerId, setPlayerId, setOtherPlayerId, playerModels, mixer, clips, idleAnimation, walkAnimation, action, currentEvents, setDistantEvents, resetCurrentEvents, otherConnected } from 'engine';
 import * as THREE from 'three';
 
-const roomID = new URLSearchParams(window.location.search).get("roomID");
+const roomID = new URLSearchParams(window.location.search).get("roomID") || undefined;
 
 var otherRoomID = ""
 var peer;
@@ -10,6 +10,9 @@ var localStream = null;
 let currentInterval;
 
 export function invertMute() {
+    if (!roomID) {
+        return;
+    }
     const path = document.querySelector("#microphone svg path");
     const fill = window.getComputedStyle(path).fill;
 
@@ -29,19 +32,21 @@ export function invertMute() {
     }
 }
 
-if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
-    navigator.mediaDevices.getUserMedia({ audio: true, video: false })
-        .then(stream => {
-            localStream = stream;
-            if (typeof playerId !== 'undefined' && playerId === 0 && typeof connectToOtherPeer === 'function') {
-                connectToOtherPeer();
-            }
-        })
-        .catch(err => {
-            console.error('Microphone access denied:', err);
-        });
-} else {
-    console.error('getUserMedia is not supported in this browser or context.');
+if (roomID) {
+    if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+        navigator.mediaDevices.getUserMedia({ audio: true, video: false })
+            .then(stream => {
+                localStream = stream;
+                if (typeof playerId !== 'undefined' && playerId === 0 && typeof connectToOtherPeer === 'function') {
+                    connectToOtherPeer();
+                }
+            })
+            .catch(err => {
+                console.error('Microphone access denied:', err);
+            });
+    } else {
+        console.error('getUserMedia is not supported in this browser or context.');
+    }
 }
 
 function setupAudioCall(conn) {
@@ -88,6 +93,10 @@ function stopRemoteAudio() {
 }
 
 export function multiplayerStart() {
+    if (roomID === undefined) {
+        console.warn("No roomID is defined in the URL, using fallback singleplayer mode");
+        return;
+    }
     if (roomID.endsWith("-2")) {
         otherRoomID = roomID.slice(0, -2);
         setPlayerId(0);
