@@ -197,9 +197,9 @@ export function updatePlayerNoCamera(position) {
 
 // Handle window resize
 export function enableResize() {
-        renderer.setSize(window.innerWidth, window.innerHeight);
-        camera.aspect = window.innerWidth / window.innerHeight;
-        camera.updateProjectionMatrix();
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    camera.aspect = window.innerWidth / window.innerHeight;
+    camera.updateProjectionMatrix();
 }
 
 export function addJoystick() {
@@ -223,7 +223,6 @@ export function animate() {
 }
 
 export function collision() {
-    return false;
     const Player = playerModels[playerId];
     if (!Player) return;
 
@@ -246,7 +245,6 @@ export function collision() {
     }
     return false;
 }
-
 
 export function interaction() {
     const Player = playerModels[playerId];

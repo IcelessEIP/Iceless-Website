@@ -1,10 +1,11 @@
 import * as ENGINE from 'engine';
 
-let joyManager;
+export let joyManager;
 export let joystickAngle = 0.0;
 export let joystickPower = 0;
 
 export function addJoystick() {
+    document.getElementById("joystickWrapper1").style.display = "block";
     const options = {
         zone: document.getElementById('joystickWrapper1'),
         size: 120,
@@ -35,6 +36,7 @@ export function addJoystick() {
 }
 
 export function addTriangle() {
+    document.getElementById("joystickWrapper2").style.display = "block";
     document.getElementById("jumpButton").addEventListener("click", function (evt) {
         ENGINE.triangleClickedTrue();
     });

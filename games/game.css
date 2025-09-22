@@ -10,9 +10,12 @@
     touch-action: manipulation;
 }
 
+#joystickWrapper1, #joystickWrapper2 {
+    display: none;
+}
+
 #mobileInterface #joystickWrapper1 {
     pointer-events: auto;
-    display: block;
     position: absolute;
     bottom: 0;
     left: 0;
@@ -27,7 +30,6 @@
 
 #mobileInterface #joystickWrapper2 {
     pointer-events: auto;
-    display: block;
     position: absolute;
     bottom: 0;
     right: 0;
