@@ -180,17 +180,17 @@ export function game() {
     20); // adapt distance to the screen size
     ENGINE.controls.maxPolarAngle = Math.PI / 10;
     ENGINE.controls.minPolarAngle = Math.PI / 10;
-    const ambientLight = new THREE.AmbientLight(0xaaccff, 2.0);
+    const ambientLight = new THREE.AmbientLight(0xe6edc0, 0.2);
     ENGINE.scene.add(ambientLight);
 
-    const directionalLight = new THREE.DirectionalLight(0xE4EEFF, 3.0);
-    directionalLight.position.set(20, 40, 20);
+    const directionalLight = new THREE.DirectionalLight(0xf7f7e6, 1.5);
+    directionalLight.position.set(30, 50, -50);
     directionalLight.castShadow = ENGINE.quality < 0.6 ? false : true;
-    directionalLight.shadow.camera.left = -50;
-    directionalLight.shadow.camera.right = 50;
+    directionalLight.shadow.camera.left = -100;
+    directionalLight.shadow.camera.right = 100;
     directionalLight.shadow.camera.top = 50;
     directionalLight.shadow.camera.bottom = -50;
-    directionalLight.shadow.camera.far = 500;
+    directionalLight.shadow.camera.far = 200;
 
     directionalLight.shadow.mapSize.width = ENGINE.quality > 0.7 ? 2048 : 512;
     directionalLight.shadow.mapSize.height = ENGINE.quality > 0.7 ? 2048 : 512;
@@ -199,10 +199,6 @@ export function game() {
 
     const hemiLight = new THREE.HemisphereLight(0xaaccff, 0xddeeff, 1.0);
     ENGINE.scene.add(hemiLight);
-
-    const pointLight = new THREE.PointLight(0xaaccff, 0.5, 100);
-    pointLight.position.set(0, 3, 0);
-    ENGINE.scene.add(pointLight);
 
     const loader = new GLTFLoader();
     loader.load("assets/models/drawing/world.glb", function (gltf) {
@@ -233,7 +229,7 @@ export function game() {
         console.error(error);
     });
 
-    const waterGeometry = new THREE.CircleGeometry(2.5, 16);
+    const waterGeometry = new THREE.CircleGeometry(2.75, 16);
     const waterNormals = new THREE.TextureLoader().load("assets/textures/water_normal.jpg");
     waterNormals.wrapS = waterNormals.wrapT = THREE.RepeatWrapping;
 
@@ -251,7 +247,7 @@ export function game() {
     water.material.transparent = true;
     water.material.uniforms.alpha.value = 0.9;
     water.rotation.x = - Math.PI / 2;
-    water.position.set(-9.5, -0.2, 15);
+    water.position.set(-9.75, -0.2, 14.75);
 
     ENGINE.scene.add(water);
 
