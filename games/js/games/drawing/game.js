@@ -1,10 +1,10 @@
 import * as ENGINE from 'engine';
 import * as THREE from 'three';
-import * as CONTROLS from 'engine/controls.js';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js'; // should not be here, should be used in engine.js and have a function to load model
 import { Water } from 'three/addons/objects/Water.js';
+import { playerId } from 'engine';
 
-let lastPlayerPosition;
+const codec = /^((?!chrome|android).)*safari/i.test(navigator.userAgent) ? "image/jpeg" : "image/webp"; // if it's safari use jpeg because they don't support webp??
 
 let canvas;
 
@@ -37,14 +37,16 @@ brightnessPicker.className = "color-picker";
 brightnessSlider.appendChild(brightnessPicker);
 brightnessPicker.style.left = "50%"; // Start at 50% brightness
 
-sliderContainer.appendChild(colorSlider);
-sliderContainer.appendChild(brightnessSlider);
-document.body.appendChild(sliderContainer);
+if (playerId === 1) {
+    sliderContainer.appendChild(colorSlider);
+    sliderContainer.appendChild(brightnessSlider);
+    document.body.appendChild(sliderContainer);
 
-const colorSliderStyle = document.createElement("link");
-colorSliderStyle.rel = "stylesheet";
-colorSliderStyle.href = "./js/games/drawing/colorSlider.css";
-document.head.appendChild(colorSliderStyle);
+    const colorSliderStyle = document.createElement("link");
+    colorSliderStyle.rel = "stylesheet";
+    colorSliderStyle.href = "./js/games/drawing/colorSlider.css";
+    document.head.appendChild(colorSliderStyle);
+}
 
 function updateColorSliderGradient() {
     const gradientStops = [0, 17, 33, 50, 67, 83, 100].map(percent => {
@@ -86,8 +88,10 @@ function addSliderEventListeners(slider, isHue) {
     });
 }
 
-addSliderEventListeners(colorSlider, true);
-addSliderEventListeners(brightnessSlider, false);
+if (playerId === 1) {
+    addSliderEventListeners(colorSlider, true);
+    addSliderEventListeners(brightnessSlider, false);
+}
 
 const raycaster = new THREE.Raycaster();
 const pointer = new THREE.Vector2();
@@ -95,7 +99,7 @@ const pointer = new THREE.Vector2();
 const paintCanvas = document.createElement("canvas");
 paintCanvas.width = 768;
 paintCanvas.height = 768;
-const ctx = paintCanvas.getContext("2d");
+const ctx = paintCanvas.getContext("2d", { willReadFrequently: true });
 ctx.fillStyle = "#ffffff";
 ctx.fillRect(0, 0, paintCanvas.width, paintCanvas.height);
 
@@ -149,24 +153,31 @@ function onPointerMove(event) {
     }
 }
 
-window.addEventListener("pointermove", (event) => {
-    if (isDown) {
-        onPointerMove(event);
-    }
-});
+if (playerId === 1) {
+    window.addEventListener("pointermove", (event) => {
+        if (isDown) {
+            onPointerMove(event);
+        }
+    });
 
-window.addEventListener("pointerdown", () => {
-    isDown = true;
-});
-
-window.addEventListener("pointerup", () => {lastUv = null;isDown = false});
+    window.addEventListener("pointerdown", () => {
+        isDown = true;
+    });
+    window.addEventListener("pointerup", () => {lastUv = null;isDown = false; ENGINE.currentEvents.push("updatecanvas " + paintCanvas.toDataURL(codec, 0.1));});
+}
 
 function analyseEvents() {
     for (let i = 0; i < ENGINE.distantEvents.length; i++) {
-        if (i === ENGINE.distantEvents.length - 1) {
-            ENGINE.resetDistantEvents();
+        if (ENGINE.distantEvents[i].startsWith("updatecanvas ")) {
+            const img = new Image();
+            img.src = ENGINE.distantEvents[i].slice(13);
+            img.onload = () => {
+                ctx.drawImage(img, 0, 0);
+                paintTexture.needsUpdate = true;
+            };
         }
     }
+    ENGINE.resetDistantEvents();
 }
 
 // Animation loop
@@ -255,52 +266,6 @@ export function game() {
         gltf.scene.name = "world";
         ENGINE.scene.add(gltf.scene);
     }, undefined, function (error) {
-        console.error(error);
-    });
-
-    loader.loadAsync("assets/models/pinguin/pinguin_both.glb")
-    .then(gltf => {
-        gltf.scene.traverse((child) => {
-            if (child.isMesh) {
-                child.castShadow = true;
-                child.receiveShadow = true;
-            }
-        });
-        gltf.scene.position.set(0, 0, -3);
-        gltf.scene.rotation.set(0, -1.5, 0);
-        ENGINE.mixer.push(new THREE.AnimationMixer(gltf.scene));
-        ENGINE.clips.push(gltf.animations);
-        ENGINE.setPlayerModel(gltf.scene, 0);
-        ENGINE.scene.add(gltf.scene);
-        ENGINE.idleAnimation.push(THREE.AnimationClip.findByName(ENGINE.clips[0], 'ArmatureAction'));
-        ENGINE.walkAnimation.push(THREE.AnimationClip.findByName(ENGINE.clips[0], 'Armature|Armature|ArmatureAction_Armature'));
-        ENGINE.action.push(ENGINE.mixer[0].clipAction(ENGINE.idleAnimation[0]));
-        ENGINE.action[0].play();
-    })
-    .catch(error => {
-        console.error(error);
-    });
-
-    loader.loadAsync("assets/models/pinguin/pinguin_both.glb")
-    .then(gltf => {
-        gltf.scene.traverse((child) => {
-            if (child.isMesh) {
-                child.castShadow = true;
-                child.receiveShadow = true;
-            }
-        });
-        gltf.scene.position.set(0, 0, 20);
-        gltf.scene.rotation.set(0, 1.6, 0);
-        ENGINE.mixer.push(new THREE.AnimationMixer(gltf.scene));
-        ENGINE.clips.push(gltf.animations);
-        ENGINE.setPlayerModel(gltf.scene, 1);
-        ENGINE.scene.add(gltf.scene);
-        ENGINE.idleAnimation.push(THREE.AnimationClip.findByName(ENGINE.clips[1], 'ArmatureAction'));
-        ENGINE.walkAnimation.push(THREE.AnimationClip.findByName(ENGINE.clips[1], 'Armature|Armature|ArmatureAction_Armature'));
-        ENGINE.action.push(ENGINE.mixer[1].clipAction(ENGINE.idleAnimation[1]));
-        ENGINE.action[1].play();
-    })
-    .catch(error => {
         console.error(error);
     });
 

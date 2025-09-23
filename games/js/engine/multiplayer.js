@@ -120,25 +120,27 @@ export function multiplayerStart() {
         console.log('Connected!', conn);
 
         conn.on('data', data => {
-            if (!playerModels[otherPlayerId].position.equals(new THREE.Vector3(JSON.parse(data).data.x, 0, JSON.parse(data).data.y))) {
-                action[otherPlayerId].timeScale = (0.1 * 2 + 1);
-                const walkAction = mixer[otherPlayerId].clipAction(walkAnimation[otherPlayerId]);
-                if (action[otherPlayerId] !== walkAction) {
-                    if (action[otherPlayerId]) action[otherPlayerId].fadeOut(0.2);
-                    walkAction.reset().fadeIn(0.2).play();
-                    action[otherPlayerId] = walkAction;
+            if (playerModels.length > 0) {
+                if (!playerModels[otherPlayerId].position.equals(new THREE.Vector3(JSON.parse(data).data.x, 0, JSON.parse(data).data.y))) {
+                    action[otherPlayerId].timeScale = (0.1 * 2 + 1);
+                    const walkAction = mixer[otherPlayerId].clipAction(walkAnimation[otherPlayerId]);
+                    if (action[otherPlayerId] !== walkAction) {
+                        if (action[otherPlayerId]) action[otherPlayerId].fadeOut(0.2);
+                        walkAction.reset().fadeIn(0.2).play();
+                        action[otherPlayerId] = walkAction;
+                    }
+                    playerModels[otherPlayerId].position.set(JSON.parse(data).data.x, 0, JSON.parse(data).data.y);
+                } else {
+                    action[otherPlayerId].timeScale = 1.0;
+                    const idleAction = mixer[otherPlayerId].clipAction(idleAnimation[otherPlayerId]);
+                    if (action[otherPlayerId] !== idleAction) {
+                        if (action[otherPlayerId]) action[otherPlayerId].fadeOut(0.2);
+                        idleAction.reset().fadeIn(0.2).play();
+                        action[otherPlayerId] = idleAction;
+                    }
                 }
-                playerModels[otherPlayerId].position.set(JSON.parse(data).data.x, 0, JSON.parse(data).data.y);
-            } else {
-                action[otherPlayerId].timeScale = 1.0;
-                const idleAction = mixer[otherPlayerId].clipAction(idleAnimation[otherPlayerId]);
-                if (action[otherPlayerId] !== idleAction) {
-                    if (action[otherPlayerId]) action[otherPlayerId].fadeOut(0.2);
-                    idleAction.reset().fadeIn(0.2).play();
-                    action[otherPlayerId] = idleAction;
-                }
+                playerModels[otherPlayerId].rotation.set(0, JSON.parse(data).data.angle, 0);
             }
-            playerModels[otherPlayerId].rotation.set(0, JSON.parse(data).data.angle, 0);
             if ("events" in JSON.parse(data).data) {
                 setDistantEvents(JSON.parse(data).data.events);
                 // console.log("YES EVENT");
@@ -148,18 +150,29 @@ export function multiplayerStart() {
         conn.on('open', function() {
             console.log('Connection opened with:', conn.peer);
             otherConnected();
-            currentInterval = setInterval(() => {
-                let pos = {
-                    x: playerModels[playerId].position.x,
-                    y: playerModels[playerId].position.z,
-                    angle: playerModels[playerId].rotation.y
-                };
-                if (currentEvents.length > 0) {
-                    pos.events = currentEvents;
-                    resetCurrentEvents();
-                }
-                conn.send(JSON.stringify({ type: "pos", data: pos }));
-            }, 25);
+            if (playerModels.length > 0) {
+                currentInterval = setInterval(() => {
+                    let pos = {
+                        x: playerModels[playerId].position.x,
+                        y: playerModels[playerId].position.z,
+                        angle: playerModels[playerId].rotation.y
+                    };
+                    if (currentEvents.length > 0) {
+                        pos.events = currentEvents;
+                        resetCurrentEvents();
+                    }
+                    conn.send(JSON.stringify({ type: "pos", data: pos }));
+                }, 25);
+            } else {
+                let pos = {};
+                currentInterval = setInterval(() => {
+                    if (currentEvents.length > 0) {
+                        pos.events = currentEvents;
+                        resetCurrentEvents();
+                        conn.send(JSON.stringify({ type: "pos", data: pos }));
+                    }
+                }, 25);
+            }
         });
 
         conn.on('error', function(err) {
@@ -204,18 +217,29 @@ function connectToOtherPeer() {
             waitForLocalStreamThenCall(conn);
         }
         otherConnected();
-        currentInterval = setInterval(() => {
-            const pos = {
-                x: playerModels[playerId].position.x,
-                y: playerModels[playerId].position.z,
-                angle: playerModels[playerId].rotation.y
-            };
-            if (currentEvents.length > 0) {
-                pos.events = currentEvents;
-                resetCurrentEvents();
-            }
-            conn.send(JSON.stringify({ type: "pos", data: pos }));
-        }, 25);
+        if (playerModels.length > 0) {
+            currentInterval = setInterval(() => {
+                const pos = {
+                    x: playerModels[playerId].position.x,
+                    y: playerModels[playerId].position.z,
+                    angle: playerModels[playerId].rotation.y
+                };
+                if (currentEvents.length > 0) {
+                    pos.events = currentEvents;
+                    resetCurrentEvents();
+                }
+                conn.send(JSON.stringify({ type: "pos", data: pos }));
+            }, 25);
+        } else {
+            let pos = {};
+            currentInterval = setInterval(() => {
+                if (currentEvents.length > 0) {
+                    pos.events = currentEvents;
+                    resetCurrentEvents();
+                    conn.send(JSON.stringify({ type: "pos", data: pos }));
+                }
+            }, 25);
+        }
     });
 
     conn.on('error', err => {
@@ -228,25 +252,27 @@ function connectToOtherPeer() {
     });
 
     conn.on('data', data => {
-        if (!playerModels[otherPlayerId].position.equals(new THREE.Vector3(JSON.parse(data).data.x, 0, JSON.parse(data).data.y))) {
-            action[otherPlayerId].timeScale = (0.1 * 2 + 1);
-            const walkAction = mixer[otherPlayerId].clipAction(walkAnimation[otherPlayerId]);
-            if (action[otherPlayerId] !== walkAction) {
-                if (action[otherPlayerId]) action[otherPlayerId].fadeOut(0.2);
-                walkAction.reset().fadeIn(0.2).play();
-                action[otherPlayerId] = walkAction;
+        if (playerModels.length > 0) {
+            if (!playerModels[otherPlayerId].position.equals(new THREE.Vector3(JSON.parse(data).data.x, 0, JSON.parse(data).data.y))) {
+                action[otherPlayerId].timeScale = (0.1 * 2 + 1);
+                const walkAction = mixer[otherPlayerId].clipAction(walkAnimation[otherPlayerId]);
+                if (action[otherPlayerId] !== walkAction) {
+                    if (action[otherPlayerId]) action[otherPlayerId].fadeOut(0.2);
+                    walkAction.reset().fadeIn(0.2).play();
+                    action[otherPlayerId] = walkAction;
+                }
+                playerModels[otherPlayerId].position.set(JSON.parse(data).data.x, 0, JSON.parse(data).data.y);
+            } else {
+                action[otherPlayerId].timeScale = 1.0;
+                const idleAction = mixer[otherPlayerId].clipAction(idleAnimation[otherPlayerId]);
+                if (action[otherPlayerId] !== idleAction) {
+                    if (action[otherPlayerId]) action[otherPlayerId].fadeOut(0.2);
+                    idleAction.reset().fadeIn(0.2).play();
+                    action[otherPlayerId] = idleAction;
+                }
             }
-            playerModels[otherPlayerId].position.set(JSON.parse(data).data.x, 0, JSON.parse(data).data.y);
-        } else {
-            action[otherPlayerId].timeScale = 1.0;
-            const idleAction = mixer[otherPlayerId].clipAction(idleAnimation[otherPlayerId]);
-            if (action[otherPlayerId] !== idleAction) {
-                if (action[otherPlayerId]) action[otherPlayerId].fadeOut(0.2);
-                idleAction.reset().fadeIn(0.2).play();
-                action[otherPlayerId] = idleAction;
-            }
+            playerModels[otherPlayerId].rotation.set(0, JSON.parse(data).data.angle, 0);
         }
-        playerModels[otherPlayerId].rotation.set(0, JSON.parse(data).data.angle, 0);
         if ("events" in JSON.parse(data).data) {
             setDistantEvents(JSON.parse(data).data.events);
             // console.log("YES EVENT");
