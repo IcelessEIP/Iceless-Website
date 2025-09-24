@@ -35,3 +35,22 @@
     transform: translateX(-50%);
     pointer-events: none;
 }
+
+input {
+    z-index: 500;
+    height: 35px;
+    width: 80%;
+    position: fixed;
+    top: 14%;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 40px;
+    text-align: center;
+    border-radius: 20px;
+}
+
+input:disabled {
+    background-color: #000000bf;
+    color: white;
+    opacity: 1;
+}

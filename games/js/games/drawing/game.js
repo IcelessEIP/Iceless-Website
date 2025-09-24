@@ -4,7 +4,7 @@ import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js'; // should not b
 import { Water } from 'three/addons/objects/Water.js';
 import { playerId } from 'engine';
 
-let codec = /^((?!chrome|android).)*safari/i.test(navigator.userAgent) ? "image/jpeg" : "image/webp"; // if it's safari use jpeg because they don't support webp??
+let codec = /^((?!chrome|android).)*safari/i.test(navigator.userAgent) ? "image/jpeg" : "image/webp"; // if it's safari use jpeg because they don't support webp??!
 
 let canvas;
 
@@ -13,6 +13,8 @@ let lastTime = 0;
 let water;
 
 let isDown = false;
+
+let distantWord;
 
 let currentBrushThickness = 20;
 let currentBrushColor = "#ff0000";
@@ -35,17 +37,28 @@ brightnessSlider.className = "brightness-slider";
 const brightnessPicker = document.createElement("div");
 brightnessPicker.className = "color-picker";
 brightnessSlider.appendChild(brightnessPicker);
-brightnessPicker.style.left = "50%"; // Start at 50% brightness
+brightnessPicker.style.left = "50%";
+
+const inputStyle = document.createElement("link");
+inputStyle.rel = "stylesheet";
+inputStyle.href = "./js/games/drawing/style.css";
+const input = document.createElement("input");
+document.head.appendChild(inputStyle);
+document.body.appendChild(input);
 
 if (playerId === 1) {
+    input.disabled = true;
+    fetch('./js/games/drawing/wordlist.json')
+        .then(response => response.json())
+        .then(data => {
+            const randomWord = data[Math.floor(Math.random() * data.length)];
+            input.value = randomWord;
+            ENGINE.currentEvents.push("updateword " + randomWord);
+        })
+        .catch(error => console.error("Error loading wordlist:", error));
     sliderContainer.appendChild(colorSlider);
     sliderContainer.appendChild(brightnessSlider);
     document.body.appendChild(sliderContainer);
-
-    const colorSliderStyle = document.createElement("link");
-    colorSliderStyle.rel = "stylesheet";
-    colorSliderStyle.href = "./js/games/drawing/colorSlider.css";
-    document.head.appendChild(colorSliderStyle);
 }
 
 function updateColorSliderGradient() {
@@ -180,9 +193,14 @@ function analyseEvents() {
                 ctx.drawImage(img, 0, 0);
                 paintTexture.needsUpdate = true;
             };
-        }
-        if (ENGINE.distantEvents[i].startsWith("updatecodec ")) {
+        } else if (ENGINE.distantEvents[i].startsWith("updatecodec ")) {
             codec = ENGINE.distantEvents[i].slice(12);
+        } else if (ENGINE.distantEvents[i].startsWith("updateword ")) {
+            distantWord = ENGINE.distantEvents[i].slice(11);
+            input.click();
+            input.focus();
+        } else if (ENGINE.distantEvents[i] === "answer") {
+            input.value = "C'est bon !";
         }
     }
     ENGINE.resetDistantEvents();
@@ -197,8 +215,15 @@ function animate(now) {
             ENGINE.mixer[i].update(ENGINE.delta);
         }
     }
-    if (ENGINE.quality >= 0.5) {
+    if (water && ENGINE.quality >= 0.5 && playerId === 1) {
         water.material.uniforms['time'].value += 1.0 / 60.0;
+    }
+    if (distantWord) {
+        if (input.value.normalize().toLowerCase() === distantWord.normalize().toLowerCase()) {
+            ENGINE.currentEvents.push("answer");
+            input.disabled = true;
+            input.value = "C'est bon !";
+        }
     }
     requestAnimationFrame(animate);
     if (now - lastTime < ENGINE.interval)
@@ -261,7 +286,7 @@ export function game() {
                         child.material = paintMaterial;
                         canvas = child;
                     } else if (child.name.startsWith("Deletable") && playerId === 0) {
-                        ;
+                        child.visible = false;
                     }
                     child.castShadow = false;
                     child.receiveShadow = false;
@@ -299,7 +324,9 @@ export function game() {
     water.rotation.x = - Math.PI / 2;
     water.position.set(-4, 7.7, -3);
 
-    ENGINE.scene.add(water);
+    if (playerId === 1) {
+        ENGINE.scene.add(water);
+    }
 
     ENGINE.addMuteButton();
     ENGINE.enableResize();
