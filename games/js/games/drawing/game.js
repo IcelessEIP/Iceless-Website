@@ -4,7 +4,7 @@ import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js'; // should not b
 import { Water } from 'three/addons/objects/Water.js';
 import { playerId } from 'engine';
 
-const codec = /^((?!chrome|android).)*safari/i.test(navigator.userAgent) ? "image/jpeg" : "image/webp"; // if it's safari use jpeg because they don't support webp??
+let codec = /^((?!chrome|android).)*safari/i.test(navigator.userAgent) ? "image/jpeg" : "image/webp"; // if it's safari use jpeg because they don't support webp??
 
 let canvas;
 
@@ -163,7 +163,12 @@ if (playerId === 1) {
     window.addEventListener("pointerdown", () => {
         isDown = true;
     });
-    window.addEventListener("pointerup", () => {lastUv = null;isDown = false; ENGINE.currentEvents.push("updatecanvas " + paintCanvas.toDataURL(codec, 0.1));});
+    window.addEventListener("pointerup", () => {
+        lastUv = null;
+        isDown = false;
+        ENGINE.currentEvents.push("updatecodec " + codec);
+        ENGINE.currentEvents.push("updatecanvas " + paintCanvas.toDataURL(codec, 0.1));
+    });
 }
 
 function analyseEvents() {
@@ -175,6 +180,9 @@ function analyseEvents() {
                 ctx.drawImage(img, 0, 0);
                 paintTexture.needsUpdate = true;
             };
+        }
+        if (ENGINE.distantEvents[i].startsWith("updatecodec ")) {
+            codec = ENGINE.distantEvents[i].slice(12);
         }
     }
     ENGINE.resetDistantEvents();
@@ -244,7 +252,7 @@ export function game() {
     loader.load("assets/models/drawing/world.glb", function (gltf) {
         gltf.scene.traverse((child) => {
             if (child.isMesh) {
-                if (child.name.startsWith("Collision") || child.name.startsWith("Interaction") || child.name.startsWith("Canvas")) {
+                if (child.name.startsWith("Collision") || child.name.startsWith("Interaction") || child.name.startsWith("Canvas") || child.name.startsWith("Deletable")) {
                     if (child.name.startsWith("Collision")) {
                         ENGINE.collidableMeshList.push(child);
                     } else if (child.name.startsWith("Interaction")) {
@@ -252,6 +260,8 @@ export function game() {
                     } else if (child.name.startsWith("Canvas")) {
                         child.material = paintMaterial;
                         canvas = child;
+                    } else if (child.name.startsWith("Deletable") && playerId === 0) {
+                        ;
                     }
                     child.castShadow = false;
                     child.receiveShadow = false;
