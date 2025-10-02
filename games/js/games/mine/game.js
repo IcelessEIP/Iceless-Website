@@ -143,7 +143,10 @@ function animate(now) {
             ropeValidation[1] = true;
         } else if (interaction === 8) {
             let script = document.createElement("script");
-            script.textContent = "showWinScreen();"
+            script.textContent = "showWinScreen();";
+            if (window.ReactNativeWebView) {
+                window.ReactNativeWebView.postMessage(JSON.stringify({key : "win"}))
+            }
             document.head.appendChild(script);
         } else if (ENGINE.triangleClicked) {
             if (Math.abs(ENGINE.playerModels[ENGINE.otherPlayerId].position.x - ENGINE.playerModels[ENGINE.playerId].position.x) < 3.5 &&
