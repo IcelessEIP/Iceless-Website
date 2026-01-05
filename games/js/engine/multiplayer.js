@@ -8,6 +8,8 @@ var peer;
 var localStream = null;
 
 let currentInterval;
+let connectionRetryInterval;
+let isConnected = false;
 
 export function invertMute() {
     if (!roomID) {
@@ -37,9 +39,6 @@ if (roomID) {
         navigator.mediaDevices.getUserMedia({ audio: true, video: false })
             .then(stream => {
                 localStream = stream;
-                if (typeof playerId !== 'undefined' && playerId === 0 && typeof connectToOtherPeer === 'function') {
-                    connectToOtherPeer();
-                }
             })
             .catch(err => {
                 console.error('Microphone access denied:', err);
@@ -118,6 +117,15 @@ export function multiplayerStart() {
 
     peer.on('connection', conn => {
         console.log('Connected!', conn);
+        isConnected = true;
+        if (connectionRetryInterval) {
+            clearInterval(connectionRetryInterval);
+            connectionRetryInterval = null;
+        }
+
+        if (playerId == 0) {
+            waitForLocalStreamThenCall(conn);
+        }
 
         conn.on('data', data => {
             if (playerModels.length > 0) {
@@ -147,7 +155,7 @@ export function multiplayerStart() {
             }
         });
 
-        conn.on('open', function() {
+        conn.on('open', function () {
             console.log('Connection opened with:', conn.peer);
             otherConnected();
             if (playerModels.length > 0) {
@@ -175,13 +183,15 @@ export function multiplayerStart() {
             }
         });
 
-        conn.on('error', function(err) {
+        conn.on('error', function (err) {
             console.error('Connection error:', err);
         });
 
-        conn.on('close', function() {
+        conn.on('close', function () {
             console.log('Connection closed with:', conn.peer);
             clearInterval(currentInterval);
+            isConnected = false;
+            startConnectionRetry();
         });
     });
 
@@ -198,9 +208,29 @@ export function multiplayerStart() {
             call.answer();
         }
     });
+
+    startConnectionRetry();
+}
+
+function startConnectionRetry() {
+    if (connectionRetryInterval) {
+        return;
+    }
+    
+    console.log('Starting connection retry mechanism...');
+    connectionRetryInterval = setInterval(() => {
+        if (!isConnected && peer) {
+            console.log('Attempting to connect to peer...');
+            connectToOtherPeer();
+        }
+    }, 3000);
 }
 
 function connectToOtherPeer() {
+    if (isConnected) {
+        return;
+    }
+
     const conn = peer.connect(otherRoomID, {
         // host: 'api.iceless.app',
         // port: 80,
@@ -212,7 +242,12 @@ function connectToOtherPeer() {
 
     conn.on('open', () => {
         console.log("Connected!")
-        // Only playerId == 0 initiates audio call, and only when localStream is ready
+        isConnected = true;
+        if (connectionRetryInterval) {
+            clearInterval(connectionRetryInterval);
+            connectionRetryInterval = null;
+        }
+
         if (playerId == 0) {
             waitForLocalStreamThenCall(conn);
         }
@@ -243,12 +278,14 @@ function connectToOtherPeer() {
     });
 
     conn.on('error', err => {
-        console.log('Connection failed, retrying...', err);
+        console.log('Connection failed, will retry...', err);
     });
 
-    conn.on('close', function() {
+    conn.on('close', function () {
         console.log('Connection closed with:', conn.peer);
         clearInterval(currentInterval);
+        isConnected = false;
+        startConnectionRetry();
     });
 
     conn.on('data', data => {
