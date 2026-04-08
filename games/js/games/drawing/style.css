@@ -1,0 +1,56 @@
+.color-slider-container {
+    position: fixed;
+    bottom: 20%;
+    left: 40%;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.color-slider {
+    width: 200px;
+    height: 40px;
+    border: 2px solid white;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: 0.1s transform;
+    transition-delay: 200ms;
+}
+
+.brightness-slider {
+    width: 200px;
+    height: 40px;
+    background: linear-gradient(to right, #000000, #ffffff);
+    border: 2px solid white;
+    border-radius: 8px;
+    cursor: pointer;
+}
+
+.color-picker {
+    position: absolute;
+    width: 5px;
+    height: 40%;
+    background: white;
+    border: 2px solid black;
+    transform: translateX(-50%);
+    pointer-events: none;
+}
+
+input {
+    z-index: 500;
+    height: 35px;
+    width: 80%;
+    position: fixed;
+    top: 14%;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 40px;
+    text-align: center;
+    border-radius: 20px;
+}
+
+input:disabled {
+    background-color: #000000bf;
+    color: white;
+    opacity: 1;
+}
